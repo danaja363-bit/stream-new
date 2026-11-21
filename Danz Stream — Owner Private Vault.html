@@ -1,0 +1,2204 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danz Stream — Owner Private Vault</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- HLS.js for .m3u8 Live Stream Preview -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      background-color: #07090f;
+      color: #f1f5f9;
+    }
+
+    /* Custom Dark Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #07090f;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e11d48;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    @keyframes shakeError {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .animate-shake {
+      animation: shakeError 0.35s ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-rose-600 selection:text-white">
+
+  <!-- ===================================================================== -->
+  <!-- 1. OWNER PIN GATE LOCK SCREEN                                         -->
+  <!-- ===================================================================== -->
+  <div id="ownerPinGate" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#07090f]">
+    <!-- Subtle Ambient Glow -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] rounded-full bg-rose-600/10 blur-3xl"></div>
+      <div class="absolute -bottom-32 right-1/4 w-[26rem] h-[26rem] rounded-full bg-amber-500/10 blur-3xl"></div>
+    </div>
+
+    <div id="pinGateCard" class="relative w-full max-w-md bg-slate-900/95 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+      <!-- Emblem & Title -->
+      <div class="text-center space-y-2.5">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-600 via-rose-500 to-amber-500 p-0.5 mx-auto shadow-lg shadow-rose-600/20">
+          <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+            <svg class="w-8 h-8 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-extrabold tracking-wider uppercase">
+          Owner Private Vault
+        </div>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+          Danz Stream Command Center
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-400">
+          Masukkan PIN Keamanan Owner untuk mengakses database member, konfirmasi DANA VIP, dan server streaming.
+        </p>
+      </div>
+
+      <!-- PIN Unlock Form -->
+      <form onsubmit="OwnerApp.handlePinUnlock(event)" class="space-y-4">
+        <div>
+          <label for="ownerPinInput" class="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider">
+            PIN Akses Owner
+          </label>
+          <div class="relative">
+            <input
+              id="ownerPinInput"
+              type="password"
+              inputmode="numeric"
+              maxlength="12"
+              required
+              autofocus
+              placeholder="••••••"
+              class="w-full bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-2xl px-4 py-3.5 text-center font-mono text-xl font-extrabold tracking-[0.45em] text-white placeholder-slate-600 outline-none transition-colors"
+            />
+            <button
+              type="button"
+              onclick="OwnerApp.togglePinVisibility()"
+              class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1.5"
+              title="Tampilkan / Sembunyikan PIN"
+            >
+              <svg id="pinEyeIcon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <p id="pinGateErrorMsg" class="hidden text-xs text-rose-400 font-semibold mt-2 text-center">
+            PIN salah. Silakan periksa kembali PIN Owner Anda.
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-amber-500 text-white text-sm font-extrabold shadow-lg shadow-rose-600/25 transition-all flex items-center justify-center gap-2"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+          </svg>
+          Buka Brankas Owner
+        </button>
+      </form>
+
+      <!-- Subtle Setup Hint -->
+      <div class="pt-3 border-t border-slate-800/90 text-center space-y-1">
+        <p class="text-[11px] text-slate-500">
+          Setup awal: PIN default adalah <span class="font-mono font-bold text-slate-300 bg-slate-800 px-1.5 py-0.5 rounded">202699</span> (dapat diubah setelah masuk).
+        </p>
+        <p class="text-[10px] text-slate-600">
+          Simpan file ini di folder/origin yang sama dengan <code class="text-slate-400">index.html</code> untuk sinkronisasi otomatis.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 2. UNLOCKED OWNER VAULT WORKSPACE                                     -->
+  <!-- ===================================================================== -->
+  <div id="ownerWorkspace" class="hidden flex-1 flex flex-col">
+
+    <!-- Top Sticky Executive Command Navbar -->
+    <header class="sticky top-0 z-40 bg-[#07090f]/95 backdrop-blur-md border-b border-slate-800/90 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between gap-3 py-3.5">
+
+          <!-- Brand & Vault Title -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-rose-600/20">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-extrabold text-base sm:text-lg tracking-tight text-white">
+                  DANZ<span class="text-rose-500">STREAM</span>
+                </span>
+                <span class="px-2 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/35 text-amber-300 text-[10px] font-extrabold uppercase tracking-wider">
+                  Owner Private Vault
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-400 hidden sm:block">
+                Pusat Kendali Database User, Verifikasi DANA VIP &amp; Server Streaming
+              </p>
+            </div>
+          </div>
+
+          <!-- Right Controls: Live Sync Pill & Lock Vault Button -->
+          <div class="flex items-center gap-2.5">
+            <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Sinkronisasi Real-Time</span>
+            </div>
+
+            <button
+              onclick="OwnerApp.refreshAllViews(true)"
+              class="p-2 sm:px-3 sm:py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-xs font-bold flex items-center gap-1.5 transition-colors"
+              title="Muat ulang data dari penyimpanan lokal"
+            >
+              <svg class="w-4 h-4 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <path d="M3 3v5h5"/>
+                <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+                <path d="M16 16h5v5"/>
+              </svg>
+              <span class="hidden sm:inline">Refresh</span>
+            </button>
+
+            <button
+              onclick="OwnerApp.lockVault()"
+              class="px-3.5 py-2 rounded-xl bg-rose-600/15 hover:bg-rose-600 border border-rose-500/40 text-rose-300 hover:text-white text-xs font-extrabold flex items-center gap-1.5 transition-colors"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span>Kunci Vault</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 Navigation Tabs -->
+        <nav class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2.5 border-t border-slate-800/80">
+          <button
+            data-tab="overview"
+            onclick="OwnerApp.switchTab('overview')"
+            class="owner-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-colors bg-rose-600 text-white flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="7" height="9" x="3" y="3" rx="1"/>
+              <rect width="7" height="5" x="14" y="3" rx="1"/>
+              <rect width="7" height="9" x="14" y="12" rx="1"/>
+              <rect width="7" height="5" x="3" y="16" rx="1"/>
+            </svg>
+            <span>Ringkasan &amp; Konfirmasi DANA</span>
+            <span id="navPendingBadge" class="hidden px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 text-[10px] font-extrabold">0</span>
+          </button>
+
+          <button
+            data-tab="dana"
+            onclick="OwnerApp.switchTab('dana')"
+            class="owner-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-300 hover:text-white hover:bg-slate-800/90 flex items-center gap-2"
+          >
+            <svg class="w-4 h-4 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+              <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+            </svg>
+            <span>Rekening DANA &amp; Harga VIP</span>
+          </button>
+
+          <button
+            data-tab="members"
+            onclick="OwnerApp.switchTab('members')"
+            class="owner-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-300 hover:text-white hover:bg-slate-800/90 flex items-center gap-2"
+          >
+            <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span>Manajemen Member</span>
+          </button>
+
+          <button
+            data-tab="streams"
+            onclick="OwnerApp.switchTab('streams')"
+            class="owner-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-300 hover:text-white hover:bg-slate-800/90 flex items-center gap-2"
+          >
+            <svg class="w-4 h-4 text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            <span>Link Video / Embed Episode</span>
+          </button>
+
+          <button
+            data-tab="database"
+            onclick="OwnerApp.switchTab('database')"
+            class="owner-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-300 hover:text-white hover:bg-slate-800/90 flex items-center gap-2"
+          >
+            <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M3 5V19A9 3 0 0 0 21 19V5"/>
+              <path d="M3 12A9 3 0 0 0 21 12"/>
+            </svg>
+            <span>Database Inspector &amp; PIN</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+      <!-- ================================================================= -->
+      <!-- TAB 1: RINGKASAN & KONFIRMASI DANA (ACC VIP)                      -->
+      <!-- ================================================================= -->
+      <section id="tabPanel_overview" class="space-y-6">
+        <!-- 4 KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold text-slate-400">Total User Terdaftar</p>
+              <h2 id="kpiTotalUsers" class="text-2xl sm:text-3xl font-extrabold text-white mt-1">0</h2>
+              <p class="text-[11px] text-slate-500 mt-1">Akun Biasa &amp; Premium</p>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-400 flex items-center justify-center">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-5 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold text-amber-300">Member VIP Premium</p>
+              <h2 id="kpiVipUsers" class="text-2xl sm:text-3xl font-extrabold text-amber-400 mt-1">0</h2>
+              <p class="text-[11px] text-slate-400 mt-1">Akses 1080p Full HD Aktif</p>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/35 text-amber-400 flex items-center justify-center">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 border border-rose-500/30 rounded-2xl p-5 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold text-rose-300">Menunggu ACC DANA</p>
+              <h2 id="kpiPendingCount" class="text-2xl sm:text-3xl font-extrabold text-rose-400 mt-1">0</h2>
+              <p class="text-[11px] text-slate-400 mt-1">Perlu verifikasi transfer</p>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/35 text-rose-400 flex items-center justify-center">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 border border-emerald-500/30 rounded-2xl p-5 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold text-emerald-300">Estimasi Pendapatan VIP</p>
+              <h2 id="kpiRevenue" class="text-xl sm:text-2xl font-extrabold text-emerald-400 mt-1">Rp 0</h2>
+              <p class="text-[11px] text-slate-400 mt-1">Dari transaksi VIP disetujui</p>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/35 text-emerald-400 flex items-center justify-center">
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" x2="12" y1="2" y2="22"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- DANA Payment Confirmations Panel -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div class="p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
+                <span class="w-2 h-5 rounded-full bg-rose-600"></span>
+                Daftar Konfirmasi Pembayaran DANA (ACC VIP)
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">
+                Klik <strong class="text-emerald-400">ACC Jadi VIP</strong> setelah dana masuk ke rekening DANA Anda. Status VIP user di <code class="text-slate-300">index.html</code> akan aktif seketika.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button
+                onclick="OwnerApp.createSimulatedPayment()"
+                class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-amber-300 flex items-center gap-1.5 transition-colors"
+              >
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"/>
+                  <path d="M12 5v14"/>
+                </svg>
+                Tambah Simulasi Konfirmasi User
+              </button>
+            </div>
+          </div>
+
+          <!-- Status Filter Pills -->
+          <div class="px-5 py-3 bg-slate-950/60 border-b border-slate-800 flex flex-wrap items-center gap-1.5" id="paymentFilterPills"></div>
+
+          <!-- Responsive Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-[11px] font-extrabold uppercase tracking-wider text-slate-400 bg-slate-950/40">
+                  <th class="py-3 px-4">Akun User</th>
+                  <th class="py-3 px-4">Pengirim DANA &amp; Ref</th>
+                  <th class="py-3 px-4">Nominal</th>
+                  <th class="py-3 px-4">Catatan &amp; Waktu</th>
+                  <th class="py-3 px-4">Status</th>
+                  <th class="py-3 px-4 text-right">Aksi Verifikasi</th>
+                </tr>
+              </thead>
+              <tbody id="pendingPaymentsTableBody" class="divide-y divide-slate-800/80 text-xs sm:text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 2: PENGATURAN REKENING DANA & HARGA VIP                       -->
+      <!-- ================================================================= -->
+      <section id="tabPanel_dana" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Edit Form (7 Cols) -->
+        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-5 shadow-xl">
+          <div class="border-b border-slate-800 pb-3.5">
+            <h2 class="text-base sm:text-lg font-extrabold text-white">Pengaturan Rekening DANA &amp; Harga Paket VIP</h2>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Perubahan langsung tersimpan ke <code class="text-sky-400">danz_cfg_payment</code> dan otomatis tampil pada halaman pembayaran user.
+            </p>
+          </div>
+
+          <form onsubmit="OwnerApp.handleSaveDanaConfig(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Nomor Rekening / HP DANA Anda</label>
+              <input
+                id="cfgDanaNumber"
+                type="text"
+                required
+                oninput="OwnerApp.updateDanaLivePreview()"
+                placeholder="Contoh: 0812-3456-7890"
+                class="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl px-4 py-2.5 text-sm font-mono font-bold text-white outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Nama Pemilik Akun DANA</label>
+              <input
+                id="cfgAccountName"
+                type="text"
+                required
+                oninput="OwnerApp.updateDanaLivePreview()"
+                placeholder="Contoh: Danz Official"
+                class="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl px-4 py-2.5 text-sm text-white outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Harga Paket VIP Premium (Rupiah)</label>
+              <input
+                id="cfgVipPrice"
+                type="number"
+                min="1000"
+                step="500"
+                required
+                oninput="OwnerApp.updateDanaLivePreview()"
+                placeholder="30000"
+                class="w-full bg-slate-950 border border-slate-700 focus:border-amber-500 rounded-xl px-4 py-2.5 text-sm font-mono font-bold text-amber-300 outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1.5">Instruksi Pembayaran untuk User</label>
+              <textarea
+                id="cfgPaymentNote"
+                rows="3"
+                oninput="OwnerApp.updateDanaLivePreview()"
+                placeholder="Transfer sesuai nominal Rp 30.000 lalu kirim konfirmasi."
+                class="w-full bg-slate-950 border border-slate-700 focus:border-sky-500 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white outline-none resize-none"
+              ></textarea>
+            </div>
+
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+              <button
+                type="submit"
+                class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white text-xs sm:text-sm font-extrabold shadow-lg flex items-center gap-2"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Simpan Pengaturan DANA
+              </button>
+              <button
+                type="button"
+                onclick="OwnerApp.resetDanaDefault()"
+                class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold"
+              >
+                Reset Default
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Live User Checkout Preview (5 Cols) -->
+        <div class="lg:col-span-5 space-y-3">
+          <div class="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+            Pratinjau Tampilan Pembayaran di Sisi User
+          </div>
+
+          <div class="bg-slate-900 border border-amber-500/40 rounded-2xl p-5 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span class="font-extrabold text-white text-sm">Upgrade Member Premium VIP 1080p</span>
+              <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-extrabold">LIVE PREVIEW</span>
+            </div>
+
+            <div class="rounded-2xl bg-gradient-to-br from-sky-500 via-blue-600 to-blue-700 p-4 text-white space-y-3 shadow-lg">
+              <div class="flex items-center justify-between">
+                <span class="font-extrabold text-base tracking-wide">DANA</span>
+                <span id="previewVipPricePill" class="px-2.5 py-0.5 rounded-full bg-white text-blue-700 text-xs font-extrabold">
+                  Rp 30.000
+                </span>
+              </div>
+
+              <div class="bg-blue-950/40 rounded-xl p-3 flex items-center justify-between gap-2 border border-white/15">
+                <div>
+                  <div class="text-[11px] text-sky-100">Nomor DANA Tujuan:</div>
+                  <div id="previewDanaNum" class="font-mono text-lg font-extrabold tracking-wide">0812-3456-7890</div>
+                  <div class="text-[11px] text-sky-100">
+                    Penerima: <strong id="previewAccountName" class="text-white">Danz Official</strong>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onclick="OwnerApp.copyText(document.getElementById('previewDanaNum').textContent, 'Nomor DANA disalin!')"
+                  class="px-3 py-2 rounded-xl bg-white hover:bg-sky-50 text-blue-700 text-xs font-extrabold shrink-0"
+                >
+                  Salin
+                </button>
+              </div>
+
+              <p id="previewNoteText" class="text-[11px] text-sky-100 leading-relaxed">
+                Transfer sesuai nominal Rp 30.000 lalu kirim konfirmasi.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 3: MANAJEMEN MEMBER (BIASA & VIP PREMIUM)                     -->
+      <!-- ================================================================= -->
+      <section id="tabPanel_members" class="hidden space-y-6">
+        <!-- Manual Quick VIP Activation Card -->
+        <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-5 space-y-3.5 shadow-xl">
+          <div>
+            <h3 class="text-sm sm:text-base font-extrabold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/>
+              </svg>
+              Tambah / Aktifkan VIP Manual via Email
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Gunakan formulir ini jika user mengirim bukti transfer DANA langsung ke WhatsApp Anda. Jika email belum terdaftar, akun VIP baru akan dibuat otomatis (password default: <code class="text-slate-300">123456</code>).
+            </p>
+          </div>
+
+          <form onsubmit="OwnerApp.handleManualVipGrant(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <input
+              id="manualVipName"
+              type="text"
+              required
+              placeholder="Username / Nama User"
+              class="bg-slate-950 border border-slate-700 focus:border-amber-500 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white outline-none"
+            />
+            <input
+              id="manualVipEmail"
+              type="email"
+              required
+              placeholder="Email User (cth: user@gmail.com)"
+              class="bg-slate-950 border border-slate-700 focus:border-amber-500 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white outline-none"
+            />
+            <button
+              type="submit"
+              class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:opacity-95 text-white text-xs sm:text-sm font-extrabold shadow"
+            >
+              Aktifkan VIP Sekarang
+            </button>
+          </form>
+        </div>
+
+        <!-- Searchable Member Directory -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div class="p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-extrabold text-white">Daftar Seluruh Akun Member (<span id="memberTotalBadge">0</span>)</h3>
+              <p class="text-xs text-slate-400">Ubah status member antara User Biasa dan Member Premium VIP dengan 1 klik.</p>
+            </div>
+            <div class="relative w-full sm:w-72">
+              <input
+                id="memberSearchInput"
+                type="text"
+                oninput="OwnerApp.renderMembersTable()"
+                placeholder="Cari nama atau email member..."
+                class="w-full bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl pl-3.5 pr-3 py-2 text-xs sm:text-sm text-white outline-none"
+              />
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-[11px] font-extrabold uppercase tracking-wider text-slate-400 bg-slate-950/40">
+                  <th class="py-3 px-4">Member</th>
+                  <th class="py-3 px-4">Email</th>
+                  <th class="py-3 px-4">Tingkatan Akun</th>
+                  <th class="py-3 px-4">Bergabung</th>
+                  <th class="py-3 px-4 text-right">Kontrol Status</th>
+                </tr>
+              </thead>
+              <tbody id="membersTableBody" class="divide-y divide-slate-800/80 text-xs sm:text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 4: MANAJER LINK VIDEO / EMBED EPISODE                         -->
+      <!-- ================================================================= -->
+      <section id="tabPanel_streams" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Add / Edit Stream Form (6 Cols) -->
+          <div class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xl">
+            <div class="border-b border-slate-800 pb-3">
+              <h2 class="text-base sm:text-lg font-extrabold text-white">Pasang Link Streaming / Embed Episode</h2>
+              <p class="text-xs text-slate-400 mt-0.5">
+                Mendukung direct video (<code class="text-emerald-400">.mp4</code>, <code class="text-emerald-400">.m3u8</code>) maupun embed (<code class="text-sky-400">Google Drive /preview</code>, <code class="text-sky-400">Streamtape</code>, <code class="text-sky-400">Doodstream</code>, atau kode <code class="text-sky-400">&lt;iframe&gt;</code>).
+              </p>
+            </div>
+
+            <form onsubmit="OwnerApp.handleSaveEpisodeStream(event)" class="space-y-3.5">
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">Pilih Cepat Anime Populer atau Ketik Judul / Slug</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <select
+                    id="streamPresetSelect"
+                    onchange="OwnerApp.applyStreamPreset(this.value)"
+                    class="bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl px-3 py-2.5 text-xs text-white outline-none"
+                  >
+                    <option value="">-- Pilih Preset Anime --</option>
+                    <option value="solo-leveling-s2|Solo Leveling Season 2">Solo Leveling Season 2</option>
+                    <option value="dandadan|Dandadan">Dandadan</option>
+                    <option value="one-piece|One Piece">One Piece</option>
+                    <option value="bleach-tybw|Bleach: TYBW - The Conflict">Bleach: TYBW - The Conflict</option>
+                    <option value="sousou-no-frieren|Sousou no Frieren">Sousou no Frieren</option>
+                    <option value="jujutsu-kaisen-s2|Jujutsu Kaisen Season 2">Jujutsu Kaisen Season 2</option>
+                    <option value="kimetsu-no-yaiba-hashira|Kimetsu no Yaiba: Hashira">Kimetsu no Yaiba: Hashira</option>
+                    <option value="naruto-shippuden|Naruto: Shippuden">Naruto: Shippuden</option>
+                  </select>
+                  <input
+                    id="streamAnimeKey"
+                    type="text"
+                    required
+                    placeholder="Slug / ID (cth: solo-leveling-s2)"
+                    class="bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl px-3.5 py-2.5 text-xs font-mono text-white outline-none"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div class="sm:col-span-2">
+                  <label class="block text-xs font-bold text-slate-300 mb-1">Judul Anime</label>
+                  <input
+                    id="streamAnimeTitle"
+                    type="text"
+                    required
+                    placeholder="Contoh: Solo Leveling Season 2"
+                    class="w-full bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">Episode Ke-</label>
+                  <input
+                    id="streamEpisodeNum"
+                    type="number"
+                    min="1"
+                    value="1"
+                    required
+                    class="w-full bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-mono font-bold text-white outline-none"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">Kualitas Server</label>
+                  <select
+                    id="streamQualitySelect"
+                    class="w-full bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white outline-none"
+                  >
+                    <option value="1080p VIP">1080p VIP (Khusus Member Premium)</option>
+                    <option value="720p HD">720p HD (Server Utama)</option>
+                    <option value="480p SD">480p SD (Mirror Cepat)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">Tipe Pemutar</label>
+                  <select
+                    id="streamTypeSelect"
+                    class="w-full bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white outline-none"
+                  >
+                    <option value="auto">Deteksi Otomatis (MP4 / M3U8 / Embed)</option>
+                    <option value="mp4">Direct Video (.mp4 / .webm)</option>
+                    <option value="hls">HLS Stream (.m3u8)</option>
+                    <option value="iframe">Embed Player / Google Drive / Iframe</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-300 mb-1">URL Video atau Kode &lt;iframe&gt;</label>
+                <textarea
+                  id="streamUrlInput"
+                  rows="2"
+                  required
+                  placeholder="Tempel link .mp4, .m3u8, https://drive.google.com/file/d/ID/preview, atau kode <iframe src='...'></iframe>"
+                  class="w-full bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl px-3.5 py-2 text-xs font-mono text-white outline-none resize-none"
+                ></textarea>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                <button
+                  type="button"
+                  onclick="OwnerApp.previewStreamFromForm()"
+                  class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sky-300 text-xs font-extrabold flex items-center gap-1.5"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                  Test Preview Video
+                </button>
+                <button
+                  type="submit"
+                  class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-extrabold shadow-lg"
+                >
+                  Simpan Link Episode
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Live Video Verification Viewport (6 Cols) -->
+          <div class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3.5 shadow-xl flex flex-col justify-between">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 class="text-sm sm:text-base font-extrabold text-white">Live Preview Pemutar Video</h3>
+                <p id="streamPreviewCaption" class="text-xs text-slate-400">Klik "Test Preview Video" untuk memverifikasi stream</p>
+              </div>
+              <span id="streamPreviewModeBadge" class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 text-[11px] font-bold">
+                SIAP
+              </span>
+            </div>
+
+            <div class="relative aspect-video bg-black rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+              <div id="streamPreviewEmptyState" class="text-center p-6 space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mx-auto">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"/>
+                  </svg>
+                </div>
+                <p class="text-xs text-slate-400">Masukkan link video lalu klik <strong>Test Preview Video</strong> untuk mengecek apakah video bisa diputar.</p>
+              </div>
+
+              <video
+                id="ownerPreviewVideo"
+                class="hidden w-full h-full object-contain bg-black"
+                controls
+                playsinline
+              ></video>
+
+              <iframe
+                id="ownerPreviewIframe"
+                class="hidden w-full h-full border-0 bg-black"
+                allowfullscreen
+                allow="autoplay; encrypted-media; picture-in-picture"
+              ></iframe>
+            </div>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-[11px] text-slate-400 space-y-1">
+              <div class="font-bold text-slate-300">Tips Agar Video Selalu Bisa Diputar:</div>
+              <div>&bull; Jika memakai Google Drive, ubah akhiran link dari <code class="text-rose-400">/view</code> menjadi <code class="text-emerald-400">/preview</code>.</div>
+              <div>&bull; Jika memakai host seperti Streamtape / Doodstream / Blogger, gunakan URL embed atau tempel langsung tag <code class="text-sky-400">&lt;iframe&gt;</code>.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Saved Episode Streams Table -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+            <div>
+              <h3 class="text-base font-extrabold text-white">Daftar Link Episode Tersimpan (<span id="savedStreamsCount">0</span>)</h3>
+              <p class="text-xs text-slate-400">Tersimpan di <code class="text-rose-400">danz_episode_streams</code></p>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-[11px] font-extrabold uppercase tracking-wider text-slate-400 bg-slate-950/40">
+                  <th class="py-3 px-4">Anime &amp; Key</th>
+                  <th class="py-3 px-4">Episode</th>
+                  <th class="py-3 px-4">Server</th>
+                  <th class="py-3 px-4">URL Stream / Embed</th>
+                  <th class="py-3 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="savedStreamsTableBody" class="divide-y divide-slate-800/80 text-xs sm:text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 5: DATABASE INSPECTOR, BACKUP & KEAMANAN PIN                  -->
+      <!-- ================================================================= -->
+      <section id="tabPanel_database" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Backup, Restore & PIN Change (5 Cols) -->
+          <div class="lg:col-span-5 space-y-6">
+            <!-- Export & Import JSON Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
+              <div class="border-b border-slate-800 pb-3">
+                <h3 class="text-base font-extrabold text-white">Backup &amp; Restore Full Database</h3>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  Unduh seluruh 5 tabel database ke file <code class="text-emerald-400">.json</code> atau pulihkan data saat berpindah browser/perangkat.
+                </p>
+              </div>
+
+              <div class="space-y-2.5">
+                <button
+                  onclick="OwnerApp.exportFullDatabase()"
+                  class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-extrabold shadow flex items-center justify-center gap-2 transition-colors"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" x2="12" y1="15" y2="3"/>
+                  </svg>
+                  Export Full Database (.json)
+                </button>
+
+                <label class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer transition-colors">
+                  <svg class="w-4 h-4 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" x2="12" y1="3" y2="15"/>
+                  </svg>
+                  <span>Import / Restore File JSON</span>
+                  <input type="file" accept=".json,application/json" onchange="OwnerApp.importFullDatabase(event)" class="hidden" />
+                </label>
+              </div>
+            </div>
+
+            <!-- Change Owner PIN Card -->
+            <div class="bg-slate-900 border border-rose-500/30 rounded-2xl p-5 space-y-4 shadow-xl">
+              <div class="border-b border-slate-800 pb-3">
+                <h3 class="text-base font-extrabold text-white">Ganti PIN Keamanan Owner</h3>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  Tersimpan secara privat di <code class="text-rose-400">danz_owner_pin</code>.
+                </p>
+              </div>
+
+              <form onsubmit="OwnerApp.handleChangeOwnerPin(event)" class="space-y-3">
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">PIN Saat Ini</label>
+                  <input
+                    id="pinCurrentInput"
+                    type="password"
+                    inputmode="numeric"
+                    required
+                    placeholder="Masukkan PIN lama"
+                    class="w-full bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl px-3.5 py-2 text-sm font-mono text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">PIN Baru (4 - 12 Angka)</label>
+                  <input
+                    id="pinNewInput"
+                    type="password"
+                    inputmode="numeric"
+                    minlength="4"
+                    maxlength="12"
+                    required
+                    placeholder="Contoh: 889900"
+                    class="w-full bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl px-3.5 py-2 text-sm font-mono text-white outline-none"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">Konfirmasi PIN Baru</label>
+                  <input
+                    id="pinConfirmInput"
+                    type="password"
+                    inputmode="numeric"
+                    minlength="4"
+                    maxlength="12"
+                    required
+                    placeholder="Ulangi PIN baru"
+                    class="w-full bg-slate-950 border border-slate-700 focus:border-rose-500 rounded-xl px-3.5 py-2 text-sm font-mono text-white outline-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-extrabold shadow"
+                >
+                  Simpan PIN Baru
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Interactive Raw JSON & Structured Table Inspector (7 Cols) -->
+          <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl flex flex-col">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+              <div>
+                <h3 class="text-base font-extrabold text-white">Live Database Inspector</h3>
+                <p class="text-xs text-slate-400">Lihat isi langsung seluruh tabel penyimpanan aplikasi</p>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <button
+                  id="btnInspectorModeTable"
+                  onclick="OwnerApp.setInspectorMode('table')"
+                  class="px-3 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-bold"
+                >
+                  Tabel
+                </button>
+                <button
+                  id="btnInspectorModeJson"
+                  onclick="OwnerApp.setInspectorMode('json')"
+                  class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold"
+                >
+                  Raw JSON
+                </button>
+                <button
+                  onclick="OwnerApp.copySelectedStoreJson()"
+                  class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 text-xs font-bold"
+                >
+                  Salin JSON
+                </button>
+              </div>
+            </div>
+
+            <!-- 5 Database Store Pills -->
+            <div id="dbStoreSelectorPills" class="flex flex-wrap gap-1.5"></div>
+
+            <!-- Structured Table View -->
+            <div id="dbInspectorTableContainer" class="flex-1 overflow-auto max-h-[28rem] bg-slate-950 border border-slate-800 rounded-xl p-3"></div>
+
+            <!-- Raw JSON View -->
+            <pre
+              id="dbInspectorJsonContainer"
+              class="hidden flex-1 overflow-auto max-h-[28rem] bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs text-emerald-300 leading-relaxed"
+            ></pre>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- CUSTOM CONFIRMATION DIALOG (REPLACES NATIVE confirm())                -->
+  <!-- ===================================================================== -->
+  <div id="customConfirmModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl">
+      <h4 id="confirmModalTitle" class="text-base font-extrabold text-white">Konfirmasi Tindakan</h4>
+      <p id="confirmModalBody" class="text-xs sm:text-sm text-slate-300 leading-relaxed">Apakah Anda yakin?</p>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button
+          id="confirmModalCancelBtn"
+          class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold"
+        >
+          Batal
+        </button>
+        <button
+          id="confirmModalOkBtn"
+          class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-extrabold"
+        >
+          Ya, Lanjutkan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Stack -->
+  <div id="toastStack" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- ===================================================================== -->
+  <!-- OWNER VAULT DATABASE & CONTROLLER SCRIPT                              -->
+  <!-- ===================================================================== -->
+  <script>
+    function formatRupiah(amount) {
+      return 'Rp ' + Number(amount || 0).toLocaleString('id-ID');
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /**
+     * =========================================================================
+     * SHARED LOCALSTORAGE DATABASE REPOSITORY (`VaultDB`)
+     * Synchronizes seamlessly across the 5 shared origin keys with `index.html`:
+     *   1. danz_cfg_payment
+     *   2. danz_pending_payments
+     *   3. danz_users_store
+     *   4. danz_vip_overrides
+     *   5. danz_episode_streams
+     * =========================================================================
+     */
+    const VaultDB = (() => {
+      const KEYS = {
+        PIN: 'danz_owner_pin',
+        CFG_PAYMENT: 'danz_cfg_payment',
+        PENDING_PAYMENTS: 'danz_pending_payments',
+        USERS_STORE: 'danz_users_store',
+        VIP_OVERRIDES: 'danz_vip_overrides',
+        EPISODE_STREAMS: 'danz_episode_streams'
+      };
+
+      const DEFAULT_PAYMENT_CFG = {
+        danaNumber: '0812-3456-7890',
+        accountName: 'Danz Official',
+        danaOwner: 'Danz Official',
+        price: 30000,
+        vipPrice: 30000,
+        note: 'Transfer sesuai nominal Rp 30.000 lalu kirim konfirmasi.'
+      };
+
+      const DEFAULT_ACCOUNTS = [
+        {
+          id: 'u_demo_biasa',
+          name: 'MemberBiasa',
+          username: 'MemberBiasa',
+          email: 'biasa@danzstream.id',
+          pass: '123456',
+          tier: 'biasa',
+          isVip: false,
+          joinedAt: '20/11/2026'
+        },
+        {
+          id: 'u_demo_vip',
+          name: 'SultanVIP',
+          username: 'SultanVIP',
+          email: 'vip@danzstream.id',
+          pass: '123456',
+          tier: 'premium',
+          isVip: true,
+          joinedAt: '20/11/2026'
+        }
+      ];
+
+      function readRaw(key, fallback) {
+        try {
+          const val = localStorage.getItem(key);
+          if (!val) return JSON.parse(JSON.stringify(fallback));
+          return JSON.parse(val);
+        } catch (e) {
+          return JSON.parse(JSON.stringify(fallback));
+        }
+      }
+
+      function writeRaw(key, data) {
+        localStorage.setItem(key, JSON.stringify(data));
+      }
+
+      // Normalize `danz_users_store` whether stored as { accounts: [...], bookmarks, history } or [...]
+      function readUsersWrapper() {
+        const raw = readRaw(KEYS.USERS_STORE, null);
+        if (!raw) {
+          const initObj = { accounts: DEFAULT_ACCOUNTS, bookmarks: [], history: [] };
+          writeRaw(KEYS.USERS_STORE, initObj);
+          return initObj;
+        }
+        if (Array.isArray(raw)) {
+          return { accounts: raw, bookmarks: [], history: [] };
+        }
+        return {
+          accounts: Array.isArray(raw.accounts) ? raw.accounts : DEFAULT_ACCOUNTS,
+          bookmarks: Array.isArray(raw.bookmarks) ? raw.bookmarks : [],
+          history: Array.isArray(raw.history) ? raw.history : []
+        };
+      }
+
+      function writeUsersWrapper(wrapper) {
+        // Ensure every account keeps both `index.html` and `owner-admin.html` fields in sync
+        wrapper.accounts = wrapper.accounts.map(acc => {
+          const displayName = acc.name || acc.username || acc.email.split('@')[0];
+          const isVip = acc.tier === 'premium' || acc.isVip === true;
+          return {
+            id: acc.id || 'u_' + Date.now() + Math.random().toString(36).slice(2, 5),
+            name: displayName,
+            username: displayName,
+            email: acc.email,
+            pass: acc.pass || '123456',
+            tier: isVip ? 'premium' : 'biasa',
+            isVip: isVip,
+            joinedAt: acc.joinedAt || new Date().toLocaleDateString('id-ID')
+          };
+        });
+        writeRaw(KEYS.USERS_STORE, wrapper);
+      }
+
+      return {
+        KEYS,
+
+        getOwnerPin() {
+          return localStorage.getItem(KEYS.PIN) || '202699';
+        },
+
+        setOwnerPin(newPin) {
+          localStorage.setItem(KEYS.PIN, String(newPin).trim());
+        },
+
+        getPaymentConfig() {
+          const raw = readRaw(KEYS.CFG_PAYMENT, DEFAULT_PAYMENT_CFG);
+          const priceVal = Number(raw.price ?? raw.vipPrice ?? 30000);
+          const ownerName = raw.accountName || raw.danaOwner || 'Danz Official';
+          return {
+            danaNumber: raw.danaNumber || DEFAULT_PAYMENT_CFG.danaNumber,
+            accountName: ownerName,
+            danaOwner: ownerName,
+            price: priceVal,
+            vipPrice: priceVal,
+            note: raw.note || DEFAULT_PAYMENT_CFG.note
+          };
+        },
+
+        savePaymentConfig({ danaNumber, accountName, price, note }) {
+          const numericPrice = Math.max(1000, Number(price) || 30000);
+          const cleanName = accountName.trim();
+          const payload = {
+            danaNumber: danaNumber.trim(),
+            accountName: cleanName,
+            danaOwner: cleanName,
+            price: numericPrice,
+            vipPrice: numericPrice,
+            note: (note || '').trim() || DEFAULT_PAYMENT_CFG.note
+          };
+          writeRaw(KEYS.CFG_PAYMENT, payload);
+          return payload;
+        },
+
+        getPendingPayments() {
+          const list = readRaw(KEYS.PENDING_PAYMENTS, []);
+          return Array.isArray(list) ? list : [];
+        },
+
+        addSimulatedPayment() {
+          const cfg = this.getPaymentConfig();
+          const list = this.getPendingPayments();
+          const randNum = Math.floor(100 + Math.random() * 900);
+          const simEmail = `otaku${randNum}@gmail.com`;
+          const simName = `AnimeFans_${randNum}`;
+
+          // Also ensure user exists in `danz_users_store` as regular user
+          const wrapper = readUsersWrapper();
+          let user = wrapper.accounts.find(a => a.email.toLowerCase() === simEmail);
+          if (!user) {
+            user = {
+              id: 'u_sim_' + Date.now(),
+              name: simName,
+              username: simName,
+              email: simEmail,
+              pass: '123456',
+              tier: 'biasa',
+              isVip: false,
+              joinedAt: new Date().toLocaleDateString('id-ID')
+            };
+            wrapper.accounts.unshift(user);
+            writeUsersWrapper(wrapper);
+          }
+
+          const entry = {
+            id: 'tx_' + Date.now(),
+            userId: user.id,
+            name: simName,
+            username: simName,
+            email: simEmail,
+            senderName: `DANA ${simName}`,
+            senderRef: `0813-8899-${randNum}`,
+            amount: cfg.price,
+            method: 'DANA',
+            note: 'Sudah transfer VIP 1080p, mohon di ACC min',
+            status: 'pending',
+            date: new Date().toLocaleString('id-ID'),
+            createdAt: new Date().toLocaleString('id-ID')
+          };
+
+          list.unshift(entry);
+          writeRaw(KEYS.PENDING_PAYMENTS, list);
+          return entry;
+        },
+
+        approvePayment(txId) {
+          const list = this.getPendingPayments();
+          const tx = list.find(item => item.id === txId);
+          if (!tx) return null;
+
+          tx.status = 'approved';
+          tx.processedAt = new Date().toLocaleString('id-ID');
+          writeRaw(KEYS.PENDING_PAYMENTS, list);
+
+          // Upgrade user in `danz_users_store` & `danz_vip_overrides`
+          const email = (tx.email || '').toLowerCase();
+          const name = tx.name || tx.username || (email ? email.split('@')[0] : 'MemberVIP');
+          this.setMemberVipStatus({ email, name, userId: tx.userId, isVip: true });
+          return tx;
+        },
+
+        rejectPayment(txId) {
+          const list = this.getPendingPayments();
+          const tx = list.find(item => item.id === txId);
+          if (!tx) return null;
+
+          tx.status = 'rejected';
+          tx.processedAt = new Date().toLocaleString('id-ID');
+          writeRaw(KEYS.PENDING_PAYMENTS, list);
+          return tx;
+        },
+
+        getAllMembers() {
+          const wrapper = readUsersWrapper();
+          const overrides = this.getVipOverrides();
+          return wrapper.accounts.map(acc => {
+            const mailKey = (acc.email || '').toLowerCase();
+            const isVip =
+              acc.tier === 'premium' ||
+              acc.isVip === true ||
+              overrides[mailKey] === true ||
+              overrides[acc.id] === true;
+            return {
+              ...acc,
+              name: acc.name || acc.username || 'Member',
+              tier: isVip ? 'premium' : 'biasa',
+              isVip
+            };
+          });
+        },
+
+        getVipOverrides() {
+          const ovr = readRaw(KEYS.VIP_OVERRIDES, {});
+          return ovr && typeof ovr === 'object' && !Array.isArray(ovr) ? ovr : {};
+        },
+
+        setMemberVipStatus({ email, name, userId, isVip }) {
+          const normEmail = (email || '').trim().toLowerCase();
+          const wrapper = readUsersWrapper();
+          const overrides = this.getVipOverrides();
+
+          let target = wrapper.accounts.find(
+            a => (normEmail && a.email.toLowerCase() === normEmail) || (userId && a.id === userId)
+          );
+
+          if (!target && normEmail) {
+            const cleanName = (name || normEmail.split('@')[0]).trim();
+            target = {
+              id: 'u_' + Date.now(),
+              name: cleanName,
+              username: cleanName,
+              email: normEmail,
+              pass: '123456',
+              tier: isVip ? 'premium' : 'biasa',
+              isVip: Boolean(isVip),
+              joinedAt: new Date().toLocaleDateString('id-ID')
+            };
+            wrapper.accounts.unshift(target);
+          } else if (target) {
+            target.tier = isVip ? 'premium' : 'biasa';
+            target.isVip = Boolean(isVip);
+          }
+
+          writeUsersWrapper(wrapper);
+
+          if (target) {
+            if (isVip) {
+              overrides[target.email.toLowerCase()] = true;
+              overrides[target.id] = true;
+              if (target.username) overrides[target.username.toLowerCase()] = true;
+            } else {
+              delete overrides[target.email.toLowerCase()];
+              delete overrides[target.id];
+              if (target.username) delete overrides[target.username.toLowerCase()];
+            }
+          } else if (normEmail) {
+            if (isVip) overrides[normEmail] = true;
+            else delete overrides[normEmail];
+          }
+
+          writeRaw(KEYS.VIP_OVERRIDES, overrides);
+        },
+
+        deleteMember(userId) {
+          const wrapper = readUsersWrapper();
+          const overrides = this.getVipOverrides();
+          const target = wrapper.accounts.find(a => a.id === userId);
+          if (target) {
+            delete overrides[target.email.toLowerCase()];
+            delete overrides[target.id];
+            writeRaw(KEYS.VIP_OVERRIDES, overrides);
+          }
+          wrapper.accounts = wrapper.accounts.filter(a => a.id !== userId);
+          writeUsersWrapper(wrapper);
+        },
+
+        getEpisodeStreams() {
+          const map = readRaw(KEYS.EPISODE_STREAMS, {});
+          return map && typeof map === 'object' && !Array.isArray(map) ? map : {};
+        },
+
+        saveEpisodeStream({ animeKey, animeTitle, episode, quality, streamType, url }) {
+          const map = this.getEpisodeStreams();
+          const cleanKey = animeKey.trim().toLowerCase().replace(/\s+/g, '-');
+          const epNum = Math.max(1, Number(episode) || 1);
+          const recordKey = `${cleanKey}__ep_${epNum}`;
+
+          map[recordKey] = {
+            recordKey,
+            animeKey: cleanKey,
+            animeTitle: animeTitle.trim(),
+            episode: epNum,
+            quality,
+            streamType,
+            url: url.trim(),
+            updatedAt: new Date().toLocaleString('id-ID')
+          };
+          writeRaw(KEYS.EPISODE_STREAMS, map);
+          return map[recordKey];
+        },
+
+        deleteEpisodeStream(recordKey) {
+          const map = this.getEpisodeStreams();
+          delete map[recordKey];
+          writeRaw(KEYS.EPISODE_STREAMS, map);
+        },
+
+        getStoreDataByKey(key) {
+          if (key === KEYS.CFG_PAYMENT) return this.getPaymentConfig();
+          if (key === KEYS.PENDING_PAYMENTS) return this.getPendingPayments();
+          if (key === KEYS.USERS_STORE) return readUsersWrapper();
+          if (key === KEYS.VIP_OVERRIDES) return this.getVipOverrides();
+          if (key === KEYS.EPISODE_STREAMS) return this.getEpisodeStreams();
+          return {};
+        },
+
+        exportAllBundle() {
+          return {
+            exportedAt: new Date().toISOString(),
+            platform: 'Danz Stream Owner Private Vault',
+            databases: {
+              danz_cfg_payment: this.getPaymentConfig(),
+              danz_pending_payments: this.getPendingPayments(),
+              danz_users_store: readUsersWrapper(),
+              danz_vip_overrides: this.getVipOverrides(),
+              danz_episode_streams: this.getEpisodeStreams()
+            }
+          };
+        },
+
+        importAllBundle(bundle) {
+          const dbs = bundle?.databases || bundle;
+          if (!dbs || typeof dbs !== 'object') {
+            throw new Error('Format file JSON backup tidak valid.');
+          }
+          if (dbs.danz_cfg_payment) writeRaw(KEYS.CFG_PAYMENT, dbs.danz_cfg_payment);
+          if (Array.isArray(dbs.danz_pending_payments)) writeRaw(KEYS.PENDING_PAYMENTS, dbs.danz_pending_payments);
+          if (dbs.danz_users_store) {
+            if (Array.isArray(dbs.danz_users_store)) {
+              writeUsersWrapper({ accounts: dbs.danz_users_store, bookmarks: [], history: [] });
+            } else {
+              writeUsersWrapper(dbs.danz_users_store);
+            }
+          }
+          if (dbs.danz_vip_overrides) writeRaw(KEYS.VIP_OVERRIDES, dbs.danz_vip_overrides);
+          if (dbs.danz_episode_streams) writeRaw(KEYS.EPISODE_STREAMS, dbs.danz_episode_streams);
+        }
+      };
+    })();
+
+    /**
+     * =========================================================================
+     * OWNER COMMAND CENTER UI CONTROLLER (`OwnerApp`)
+     * =========================================================================
+     */
+    const OwnerApp = (() => {
+      const state = {
+        unlocked: false,
+        activeTab: 'overview',
+        paymentFilter: 'all',
+        selectedDbKey: 'danz_pending_payments',
+        inspectorMode: 'table',
+        hlsInstance: null
+      };
+
+      function toast(msg, type = 'info') {
+        const stack = document.getElementById('toastStack');
+        const styles = {
+          success: 'border-emerald-500/50 bg-slate-900 text-emerald-300',
+          error: 'border-rose-500/50 bg-slate-900 text-rose-300',
+          vip: 'border-amber-500/60 bg-slate-900 text-amber-300',
+          info: 'border-sky-500/50 bg-slate-900 text-sky-200'
+        };
+        const el = document.createElement('div');
+        el.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-2xl text-xs font-bold transition-opacity duration-200 ${styles[type] || styles.info}`;
+        el.innerHTML = `<span class="w-2 h-2 rounded-full bg-current shrink-0"></span><span>${escapeHtml(msg)}</span>`;
+        stack.appendChild(el);
+        setTimeout(() => {
+          el.style.opacity = '0';
+          setTimeout(() => el.remove(), 220);
+        }, 3000);
+      }
+
+      function showConfirmDialog(title, bodyText, onConfirm) {
+        const modal = document.getElementById('customConfirmModal');
+        document.getElementById('confirmModalTitle').textContent = title;
+        document.getElementById('confirmModalBody').textContent = bodyText;
+        modal.classList.remove('hidden');
+
+        const cancelBtn = document.getElementById('confirmModalCancelBtn');
+        const okBtn = document.getElementById('confirmModalOkBtn');
+
+        const cleanup = () => {
+          modal.classList.add('hidden');
+          cancelBtn.onclick = null;
+          okBtn.onclick = null;
+        };
+
+        cancelBtn.onclick = cleanup;
+        okBtn.onclick = () => {
+          cleanup();
+          onConfirm();
+        };
+      }
+
+      // Extract raw URL if owner pastes full `<iframe src="..."></iframe>` HTML tag
+      function extractCleanStreamUrl(rawInput) {
+        const trimmed = String(rawInput || '').trim();
+        const iframeMatch = trimmed.match(/<iframe[^>]+src=["']([^"']+)["']/i);
+        if (iframeMatch && iframeMatch[1]) {
+          return iframeMatch[1].trim();
+        }
+        // Convert Google Drive `/view` link to `/preview` automatically
+        const gdriveMatch = trimmed.match(/drive\.google\.com\/file\/d\/([^/]+)\/view/i);
+        if (gdriveMatch && gdriveMatch[1]) {
+          return `https://drive.google.com/file/d/${gdriveMatch[1]}/preview`;
+        }
+        return trimmed;
+      }
+
+      function detectPlayerKind(url, explicitType) {
+        if (explicitType && explicitType !== 'auto') return explicitType;
+        const lower = url.toLowerCase();
+        if (lower.includes('.m3u8')) return 'hls';
+        if (lower.match(/\.(mp4|webm|ogg)(\?.*)?$/)) return 'mp4';
+        return 'iframe';
+      }
+
+      function renderKPIs() {
+        const members = VaultDB.getAllMembers();
+        const vipCount = members.filter(m => m.isVip).length;
+        const payments = VaultDB.getPendingPayments();
+        const pendingCount = payments.filter(p => p.status === 'pending').length;
+        const approvedRevenue = payments
+          .filter(p => p.status === 'approved')
+          .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+
+        document.getElementById('kpiTotalUsers').textContent = members.length;
+        document.getElementById('kpiVipUsers').textContent = vipCount;
+        document.getElementById('kpiPendingCount').textContent = pendingCount;
+        document.getElementById('kpiRevenue').textContent = formatRupiah(approvedRevenue);
+
+        const badge = document.getElementById('navPendingBadge');
+        if (pendingCount > 0) {
+          badge.textContent = pendingCount;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+
+      function renderPaymentsSection() {
+        const filterOptions = [
+          { id: 'all', label: 'Semua Transaksi' },
+          { id: 'pending', label: 'Menunggu ACC' },
+          { id: 'approved', label: 'Disetujui (VIP)' },
+          { id: 'rejected', label: 'Ditolak' }
+        ];
+
+        document.getElementById('paymentFilterPills').innerHTML = filterOptions.map(opt => {
+          const active = state.paymentFilter === opt.id;
+          return `
+            <button
+              onclick="OwnerApp.setPaymentFilter('${opt.id}')"
+              class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+                active
+                  ? 'bg-rose-600 text-white'
+                  : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border border-slate-800'
+              }"
+            >
+              ${opt.label}
+            </button>
+          `;
+        }).join('');
+
+        const all = VaultDB.getPendingPayments();
+        const filtered = state.paymentFilter === 'all'
+          ? all
+          : all.filter(p => p.status === state.paymentFilter);
+
+        const tbody = document.getElementById('pendingPaymentsTableBody');
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="py-10 px-4 text-center text-xs text-slate-500">
+                Belum ada data konfirmasi pembayaran DANA pada kategori ini. Klik <strong>"Tambah Simulasi Konfirmasi User"</strong> di kanan atas untuk menguji alur ACC VIP.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(tx => {
+          const userDisplay = escapeHtml(tx.name || tx.username || 'User');
+          const emailDisplay = escapeHtml(tx.email || '-');
+          const senderDisplay = escapeHtml(tx.senderName || '-');
+          const refDisplay = escapeHtml(tx.senderRef || tx.method || 'DANA');
+          const noteDisplay = escapeHtml(tx.note || '-');
+          const dateDisplay = escapeHtml(tx.date || tx.createdAt || '-');
+
+          let statusBadge = '';
+          let actionsHtml = '';
+
+          if (tx.status === 'pending') {
+            statusBadge = `<span class="px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[11px] font-extrabold">MENUNGGU ACC</span>`;
+            actionsHtml = `
+              <div class="flex items-center justify-end gap-1.5">
+                <button
+                  onclick="OwnerApp.handleApproveTx('${escapeHtml(tx.id)}')"
+                  class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow transition-colors"
+                >
+                  ACC Jadi VIP
+                </button>
+                <button
+                  onclick="OwnerApp.handleRejectTx('${escapeHtml(tx.id)}')"
+                  class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-600/20 border border-slate-700 text-slate-300 hover:text-rose-400 text-xs font-bold transition-colors"
+                >
+                  Tolak
+                </button>
+              </div>
+            `;
+          } else if (tx.status === 'approved') {
+            statusBadge = `<span class="px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-[11px] font-extrabold">DISETUJUI (VIP)</span>`;
+            actionsHtml = `<span class="text-xs font-bold text-emerald-400">VIP Aktif</span>`;
+          } else {
+            statusBadge = `<span class="px-2.5 py-1 rounded-full bg-rose-500/15 border border-rose-500/40 text-rose-300 text-[11px] font-extrabold">DITOLAK</span>`;
+            actionsHtml = `<span class="text-xs text-slate-500">Ditolak</span>`;
+          }
+
+          return `
+            <tr class="hover:bg-slate-950/50 transition-colors">
+              <td class="py-3.5 px-4">
+                <div class="font-bold text-white text-xs sm:text-sm">${userDisplay}</div>
+                <div class="text-[11px] text-slate-400 font-mono">${emailDisplay}</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-semibold text-sky-300 text-xs">${senderDisplay}</div>
+                <div class="text-[11px] text-slate-400 font-mono">${refDisplay}</div>
+              </td>
+              <td class="py-3.5 px-4 font-mono font-extrabold text-amber-400 text-xs sm:text-sm">
+                ${formatRupiah(tx.amount)}
+              </td>
+              <td class="py-3.5 px-4 max-w-xs">
+                <div class="text-xs text-slate-300 truncate">${noteDisplay}</div>
+                <div class="text-[10px] text-slate-500 mt-0.5">${dateDisplay}</div>
+              </td>
+              <td class="py-3.5 px-4">${statusBadge}</td>
+              <td class="py-3.5 px-4 text-right">${actionsHtml}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      function populateDanaConfigForm() {
+        const cfg = VaultDB.getPaymentConfig();
+        document.getElementById('cfgDanaNumber').value = cfg.danaNumber;
+        document.getElementById('cfgAccountName').value = cfg.accountName;
+        document.getElementById('cfgVipPrice').value = cfg.price;
+        document.getElementById('cfgPaymentNote').value = cfg.note;
+        OwnerApp.updateDanaLivePreview();
+      }
+
+      function renderMembersTable() {
+        const query = (document.getElementById('memberSearchInput')?.value || '').trim().toLowerCase();
+        const all = VaultDB.getAllMembers();
+        document.getElementById('memberTotalBadge').textContent = all.length;
+
+        const filtered = query
+          ? all.filter(
+              m =>
+                (m.name || '').toLowerCase().includes(query) ||
+                (m.email || '').toLowerCase().includes(query)
+            )
+          : all;
+
+        const tbody = document.getElementById('membersTableBody');
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="py-8 px-4 text-center text-xs text-slate-500">
+                Tidak ada member yang sesuai dengan pencarian.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(m => {
+          const badge = m.isVip
+            ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[11px] font-extrabold">VIP PREMIUM</span>`
+            : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[11px] font-bold">USER BIASA</span>`;
+
+          const toggleBtn = m.isVip
+            ? `<button
+                onclick="OwnerApp.toggleMemberTier('${escapeHtml(m.email)}', '${escapeHtml(m.name)}', '${escapeHtml(m.id)}', false)"
+                class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold"
+              >
+                Turunkan ke Biasa
+              </button>`
+            : `<button
+                onclick="OwnerApp.toggleMemberTier('${escapeHtml(m.email)}', '${escapeHtml(m.name)}', '${escapeHtml(m.id)}', true)"
+                class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold"
+              >
+                Upgrade ke VIP
+              </button>`;
+
+          return `
+            <tr class="hover:bg-slate-950/50 transition-colors">
+              <td class="py-3.5 px-4 font-bold text-white text-xs sm:text-sm">${escapeHtml(m.name)}</td>
+              <td class="py-3.5 px-4 font-mono text-xs text-slate-300">${escapeHtml(m.email)}</td>
+              <td class="py-3.5 px-4">${badge}</td>
+              <td class="py-3.5 px-4 text-xs text-slate-400">${escapeHtml(m.joinedAt || '-')}</td>
+              <td class="py-3.5 px-4 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  ${toggleBtn}
+                  <button
+                    onclick="OwnerApp.confirmDeleteMember('${escapeHtml(m.id)}', '${escapeHtml(m.email)}')"
+                    class="p-2 rounded-xl bg-slate-950 hover:bg-rose-600/20 border border-slate-800 text-slate-400 hover:text-rose-400"
+                    title="Hapus akun member"
+                  >
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      function renderStreamsTable() {
+        const map = VaultDB.getEpisodeStreams();
+        const entries = Object.values(map);
+        document.getElementById('savedStreamsCount').textContent = entries.length;
+
+        const tbody = document.getElementById('savedStreamsTableBody');
+        if (entries.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="py-8 px-4 text-center text-xs text-slate-500">
+                Belum ada link video khusus yang ditambahkan. Gunakan formulir di atas untuk menautkan video episode.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = entries.map(item => `
+          <tr class="hover:bg-slate-950/50 transition-colors">
+            <td class="py-3 px-4">
+              <div class="font-bold text-white text-xs sm:text-sm">${escapeHtml(item.animeTitle)}</div>
+              <div class="text-[10px] font-mono text-slate-400">${escapeHtml(item.animeKey)}</div>
+            </td>
+            <td class="py-3 px-4 font-mono font-extrabold text-rose-400 text-xs">
+              Episode ${item.episode}
+            </td>
+            <td class="py-3 px-4">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-amber-300 text-[11px] font-bold">
+                ${escapeHtml(item.quality)}
+              </span>
+            </td>
+            <td class="py-3 px-4 max-w-xs">
+              <div class="font-mono text-[11px] text-sky-300 truncate">${escapeHtml(item.url)}</div>
+            </td>
+            <td class="py-3 px-4 text-right">
+              <div class="flex items-center justify-end gap-1.5">
+                <button
+                  onclick="OwnerApp.loadStreamIntoPreview('${escapeHtml(item.recordKey)}')"
+                  class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-sky-600 text-slate-200 hover:text-white text-xs font-bold"
+                >
+                  Preview
+                </button>
+                <button
+                  onclick="OwnerApp.deleteStreamEntry('${escapeHtml(item.recordKey)}')"
+                  class="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-rose-600/20 border border-slate-800 text-slate-400 hover:text-rose-400 text-xs font-bold"
+                >
+                  Hapus
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      function renderDatabaseInspector() {
+        const stores = [
+          { key: 'danz_pending_payments', label: 'danz_pending_payments' },
+          { key: 'danz_users_store', label: 'danz_users_store' },
+          { key: 'danz_vip_overrides', label: 'danz_vip_overrides' },
+          { key: 'danz_cfg_payment', label: 'danz_cfg_payment' },
+          { key: 'danz_episode_streams', label: 'danz_episode_streams' }
+        ];
+
+        document.getElementById('dbStoreSelectorPills').innerHTML = stores.map(s => {
+          const active = state.selectedDbKey === s.key;
+          return `
+            <button
+              onclick="OwnerApp.selectDbStore('${s.key}')"
+              class="px-3 py-1.5 rounded-lg font-mono text-[11px] font-bold transition-colors ${
+                active
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-slate-950 hover:bg-slate-800 text-slate-400 border border-slate-800'
+              }"
+            >
+              ${s.label}
+            </button>
+          `;
+        }).join('');
+
+        const data = VaultDB.getStoreDataByKey(state.selectedDbKey);
+        const jsonBox = document.getElementById('dbInspectorJsonContainer');
+        const tableBox = document.getElementById('dbInspectorTableContainer');
+
+        jsonBox.textContent = JSON.stringify(data, null, 2);
+
+        if (state.inspectorMode === 'json') {
+          jsonBox.classList.remove('hidden');
+          tableBox.classList.add('hidden');
+        } else {
+          jsonBox.classList.add('hidden');
+          tableBox.classList.remove('hidden');
+
+          // Render structured key-value or array rows cleanly
+          let rows = [];
+          if (Array.isArray(data)) {
+            rows = data;
+          } else if (state.selectedDbKey === 'danz_users_store' && Array.isArray(data.accounts)) {
+            rows = data.accounts;
+          } else if (data && typeof data === 'object') {
+            rows = Object.entries(data).map(([k, v]) =>
+              typeof v === 'object' && v !== null ? { key: k, ...v } : { key: k, value: v }
+            );
+          }
+
+          if (rows.length === 0) {
+            tableBox.innerHTML = `<p class="text-xs text-slate-500 text-center py-8 font-mono">Store [${state.selectedDbKey}] saat ini kosong.</p>`;
+            return;
+          }
+
+          const cols = Array.from(new Set(rows.flatMap(r => Object.keys(r)))).slice(0, 6);
+          tableBox.innerHTML = `
+            <table class="w-full text-left border-collapse font-mono text-[11px]">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400">
+                  ${cols.map(c => `<th class="py-2 px-2.5 font-bold">${escapeHtml(c)}</th>`).join('')}
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/70 text-slate-200">
+                ${rows
+                  .map(
+                    r => `
+                    <tr>
+                      ${cols
+                        .map(c => {
+                          const val = typeof r[c] === 'object' ? JSON.stringify(r[c]) : String(r[c] ?? '-');
+                          return `<td class="py-2 px-2.5 max-w-[180px] truncate">${escapeHtml(val)}</td>`;
+                        })
+                        .join('')}
+                    </tr>
+                  `
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          `;
+        }
+      }
+
+      return {
+        init() {
+          // Listen for real-time storage changes from `index.html` in another tab
+          window.addEventListener('storage', () => {
+            if (state.unlocked) {
+              this.refreshAllViews(false);
+            }
+          });
+        },
+
+        togglePinVisibility() {
+          const inp = document.getElementById('ownerPinInput');
+          inp.type = inp.type === 'password' ? 'text' : 'password';
+        },
+
+        handlePinUnlock(e) {
+          e.preventDefault();
+          const inputVal = document.getElementById('ownerPinInput').value.trim();
+          const actualPin = VaultDB.getOwnerPin();
+          const errEl = document.getElementById('pinGateErrorMsg');
+          const card = document.getElementById('pinGateCard');
+
+          if (inputVal === actualPin) {
+            state.unlocked = true;
+            errEl.classList.add('hidden');
+            document.getElementById('ownerPinInput').value = '';
+            document.getElementById('ownerPinGate').classList.add('hidden');
+            document.getElementById('ownerWorkspace').classList.remove('hidden');
+            this.refreshAllViews(false);
+            toast('Brankas Owner berhasil dibuka.', 'success');
+          } else {
+            errEl.classList.remove('hidden');
+            card.classList.remove('animate-shake');
+            void card.offsetWidth;
+            card.classList.add('animate-shake');
+          }
+        },
+
+        lockVault() {
+          state.unlocked = false;
+          document.getElementById('ownerWorkspace').classList.add('hidden');
+          document.getElementById('ownerPinGate').classList.remove('hidden');
+          document.getElementById('ownerPinInput').focus();
+          toast('Brankas Owner dikunci.', 'info');
+        },
+
+        refreshAllViews(notify = false) {
+          renderKPIs();
+          renderPaymentsSection();
+          populateDanaConfigForm();
+          renderMembersTable();
+          renderStreamsTable();
+          renderDatabaseInspector();
+          if (notify) toast('Data database diperbarui.', 'info');
+        },
+
+        switchTab(tabName) {
+          state.activeTab = tabName;
+
+          document.querySelectorAll('.owner-tab-btn').forEach(btn => {
+            const isTarget = btn.getAttribute('data-tab') === tabName;
+            if (isTarget) {
+              btn.className = 'owner-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-colors bg-rose-600 text-white flex items-center gap-2';
+            } else {
+              btn.className = 'owner-tab-btn px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-colors text-slate-300 hover:text-white hover:bg-slate-800/90 flex items-center gap-2';
+            }
+          });
+
+          ['overview', 'dana', 'members', 'streams', 'database'].forEach(t => {
+            document.getElementById(`tabPanel_${t}`).classList.toggle('hidden', t !== tabName);
+          });
+
+          if (tabName === 'database') renderDatabaseInspector();
+        },
+
+        // Tab 1 Actions
+        setPaymentFilter(filterId) {
+          state.paymentFilter = filterId;
+          renderPaymentsSection();
+        },
+
+        createSimulatedPayment() {
+          const tx = VaultDB.addSimulatedPayment();
+          this.refreshAllViews(false);
+          toast(`Simulasi konfirmasi dari ${tx.name} (${formatRupiah(tx.amount)}) ditambahkan.`, 'info');
+        },
+
+        handleApproveTx(txId) {
+          const tx = VaultDB.approvePayment(txId);
+          if (tx) {
+            this.refreshAllViews(false);
+            toast(`ACC Berhasil! Akun ${tx.email} sekarang berstatus VIP Premium.`, 'vip');
+          }
+        },
+
+        handleRejectTx(txId) {
+          showConfirmDialog(
+            'Tolak Konfirmasi Pembayaran?',
+            'Transaksi ini akan ditandai sebagai Ditolak dan akun user tetap menjadi User Biasa.',
+            () => {
+              const tx = VaultDB.rejectPayment(txId);
+              if (tx) {
+                this.refreshAllViews(false);
+                toast('Konfirmasi pembayaran ditolak.', 'error');
+              }
+            }
+          );
+        },
+
+        // Tab 2 Actions
+        updateDanaLivePreview() {
+          const num = document.getElementById('cfgDanaNumber').value || '0812-3456-7890';
+          const name = document.getElementById('cfgAccountName').value || 'Danz Official';
+          const price = Number(document.getElementById('cfgVipPrice').value) || 30000;
+          const note = document.getElementById('cfgPaymentNote').value || 'Transfer sesuai nominal lalu kirim konfirmasi.';
+
+          document.getElementById('previewDanaNum').textContent = num;
+          document.getElementById('previewAccountName').textContent = name;
+          document.getElementById('previewVipPricePill').textContent = formatRupiah(price);
+          document.getElementById('previewNoteText').textContent = note;
+        },
+
+        handleSaveDanaConfig(e) {
+          e.preventDefault();
+          VaultDB.savePaymentConfig({
+            danaNumber: document.getElementById('cfgDanaNumber').value,
+            accountName: document.getElementById('cfgAccountName').value,
+            price: document.getElementById('cfgVipPrice').value,
+            note: document.getElementById('cfgPaymentNote').value
+          });
+          renderDatabaseInspector();
+          toast('Pengaturan rekening DANA & harga VIP berhasil disimpan!', 'success');
+        },
+
+        resetDanaDefault() {
+          VaultDB.savePaymentConfig({
+            danaNumber: '0812-3456-7890',
+            accountName: 'Danz Official',
+            price: 30000,
+            note: 'Transfer sesuai nominal Rp 30.000 lalu kirim konfirmasi.'
+          });
+          populateDanaConfigForm();
+          toast('Pengaturan DANA dikembalikan ke default.', 'info');
+        },
+
+        // Tab 3 Actions
+        handleManualVipGrant(e) {
+          e.preventDefault();
+          const name = document.getElementById('manualVipName').value;
+          const email = document.getElementById('manualVipEmail').value;
+          VaultDB.setMemberVipStatus({ email, name, isVip: true });
+          document.getElementById('manualVipName').value = '';
+          document.getElementById('manualVipEmail').value = '';
+          this.refreshAllViews(false);
+          toast(`Akun VIP Premium untuk ${email} berhasil diaktifkan!`, 'vip');
+        },
+
+        toggleMemberTier(email, name, userId, makeVip) {
+          VaultDB.setMemberVipStatus({ email, name, userId, isVip: makeVip });
+          this.refreshAllViews(false);
+          toast(
+            makeVip
+              ? `${name} (${email}) dinaikkan ke VIP Premium.`
+              : `${name} (${email}) diturunkan ke User Biasa.`,
+            makeVip ? 'vip' : 'info'
+          );
+        },
+
+        confirmDeleteMember(userId, email) {
+          showConfirmDialog(
+            'Hapus Akun Member?',
+            `Akun ${email} akan dihapus dari database lokal. Tindakan ini tidak dapat dibatalkan.`,
+            () => {
+              VaultDB.deleteMember(userId);
+              this.refreshAllViews(false);
+              toast(`Akun ${email} dihapus.`, 'error');
+            }
+          );
+        },
+
+        // Tab 4 Actions
+        applyStreamPreset(val) {
+          if (!val) return;
+          const [slug, title] = val.split('|');
+          document.getElementById('streamAnimeKey').value = slug;
+          document.getElementById('streamAnimeTitle').value = title;
+        },
+
+        previewStreamFromForm() {
+          const rawUrl = document.getElementById('streamUrlInput').value;
+          const explicitType = document.getElementById('streamTypeSelect').value;
+          const title = document.getElementById('streamAnimeTitle').value || 'Preview Episode';
+          const ep = document.getElementById('streamEpisodeNum').value || 1;
+
+          if (!rawUrl.trim()) {
+            toast('Masukkan URL video atau embed terlebih dahulu.', 'error');
+            return;
+          }
+
+          const cleanUrl = extractCleanStreamUrl(rawUrl);
+          this.mountPreviewPlayer(cleanUrl, explicitType, `${title} — Episode ${ep}`);
+        },
+
+        mountPreviewPlayer(url, explicitType, caption) {
+          const kind = detectPlayerKind(url, explicitType);
+          const emptyEl = document.getElementById('streamPreviewEmptyState');
+          const vidEl = document.getElementById('ownerPreviewVideo');
+          const ifrEl = document.getElementById('ownerPreviewIframe');
+          const badge = document.getElementById('streamPreviewModeBadge');
+          const capEl = document.getElementById('streamPreviewCaption');
+
+          if (state.hlsInstance) {
+            state.hlsInstance.destroy();
+            state.hlsInstance = null;
+          }
+
+          emptyEl.classList.add('hidden');
+          vidEl.pause();
+          vidEl.classList.add('hidden');
+          ifrEl.classList.add('hidden');
+          ifrEl.src = 'about:blank';
+
+          capEl.textContent = caption;
+
+          if (kind === 'iframe') {
+            badge.textContent = 'EMBED PLAYER';
+            badge.className = 'px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-300 text-[11px] font-bold';
+            ifrEl.src = url;
+            ifrEl.classList.remove('hidden');
+          } else if (kind === 'hls' && window.Hls && Hls.isSupported()) {
+            badge.textContent = 'HLS (.M3U8)';
+            badge.className = 'px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 text-[11px] font-bold';
+            vidEl.classList.remove('hidden');
+            const hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(vidEl);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+              vidEl.play().catch(() => {});
+            });
+            state.hlsInstance = hls;
+          } else {
+            badge.textContent = 'DIRECT VIDEO';
+            badge.className = 'px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-[11px] font-bold';
+            vidEl.src = url;
+            vidEl.classList.remove('hidden');
+            vidEl.play().catch(() => {});
+          }
+        },
+
+        handleSaveEpisodeStream(e) {
+          e.preventDefault();
+          const rawUrl = document.getElementById('streamUrlInput').value;
+          const cleanUrl = extractCleanStreamUrl(rawUrl);
+
+          const saved = VaultDB.saveEpisodeStream({
+            animeKey: document.getElementById('streamAnimeKey').value,
+            animeTitle: document.getElementById('streamAnimeTitle').value,
+            episode: document.getElementById('streamEpisodeNum').value,
+            quality: document.getElementById('streamQualitySelect').value,
+            streamType: document.getElementById('streamTypeSelect').value,
+            url: cleanUrl
+          });
+
+          renderStreamsTable();
+          renderDatabaseInspector();
+          this.mountPreviewPlayer(saved.url, saved.streamType, `${saved.animeTitle} — Episode ${saved.episode}`);
+          toast(`Link ${saved.animeTitle} Ep ${saved.episode} disimpan!`, 'success');
+        },
+
+        loadStreamIntoPreview(recordKey) {
+          const item = VaultDB.getEpisodeStreams()[recordKey];
+          if (!item) return;
+          document.getElementById('streamAnimeKey').value = item.animeKey;
+          document.getElementById('streamAnimeTitle').value = item.animeTitle;
+          document.getElementById('streamEpisodeNum').value = item.episode;
+          document.getElementById('streamQualitySelect').value = item.quality;
+          document.getElementById('streamUrlInput').value = item.url;
+          this.mountPreviewPlayer(item.url, item.streamType, `${item.animeTitle} — Episode ${item.episode}`);
+        },
+
+        deleteStreamEntry(recordKey) {
+          VaultDB.deleteEpisodeStream(recordKey);
+          renderStreamsTable();
+          renderDatabaseInspector();
+          toast('Link video episode dihapus.', 'info');
+        },
+
+        // Tab 5 Actions
+        selectDbStore(key) {
+          state.selectedDbKey = key;
+          renderDatabaseInspector();
+        },
+
+        setInspectorMode(mode) {
+          state.inspectorMode = mode;
+          document.getElementById('btnInspectorModeTable').className =
+            mode === 'table'
+              ? 'px-3 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-bold'
+              : 'px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold';
+          document.getElementById('btnInspectorModeJson').className =
+            mode === 'json'
+              ? 'px-3 py-1.5 rounded-lg bg-rose-600 text-white text-xs font-bold'
+              : 'px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold';
+          renderDatabaseInspector();
+        },
+
+        copyText(text, successMsg) {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            toast(successMsg, 'success');
+          } catch (e) {
+            toast('Gagal menyalin teks.', 'error');
+          }
+          document.body.removeChild(ta);
+        },
+
+        copySelectedStoreJson() {
+          const data = VaultDB.getStoreDataByKey(state.selectedDbKey);
+          this.copyText(JSON.stringify(data, null, 2), `JSON [${state.selectedDbKey}] disalin!`);
+        },
+
+        exportFullDatabase() {
+          const bundle = VaultDB.exportAllBundle();
+          const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          const dateTag = new Date().toISOString().slice(0, 10);
+          a.href = url;
+          a.download = `danz-stream-database-${dateTag}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          toast('File backup database (.json) berhasil diunduh!', 'success');
+        },
+
+        importFullDatabase(event) {
+          const file = event.target.files?.[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = e => {
+            try {
+              const parsed = JSON.parse(e.target.result);
+              VaultDB.importAllBundle(parsed);
+              this.refreshAllViews(false);
+              toast('Database berhasil dipulihkan dari file JSON!', 'success');
+            } catch (err) {
+              toast(err.message || 'Gagal membaca file JSON.', 'error');
+            }
+          };
+          reader.readAsText(file);
+          event.target.value = '';
+        },
+
+        handleChangeOwnerPin(e) {
+          e.preventDefault();
+          const currentPin = document.getElementById('pinCurrentInput').value.trim();
+          const newPin = document.getElementById('pinNewInput').value.trim();
+          const confirmPin = document.getElementById('pinConfirmInput').value.trim();
+
+          if (currentPin !== VaultDB.getOwnerPin()) {
+            toast('PIN saat ini tidak sesuai.', 'error');
+            return;
+          }
+          if (!/^\d{4,12}$/.test(newPin)) {
+            toast('PIN baru harus berupa 4 hingga 12 digit angka.', 'error');
+            return;
+          }
+          if (newPin !== confirmPin) {
+            toast('Konfirmasi PIN baru tidak cocok.', 'error');
+            return;
+          }
+
+          VaultDB.setOwnerPin(newPin);
+          document.getElementById('pinCurrentInput').value = '';
+          document.getElementById('pinNewInput').value = '';
+          document.getElementById('pinConfirmInput').value = '';
+          toast('PIN Keamanan Owner berhasil diperbarui!', 'success');
+        }
+      };
+    })();
+
+    window.addEventListener('DOMContentLoaded', () => {
+      OwnerApp.init();
+    });
+  </script>
+</body>
+</html>
