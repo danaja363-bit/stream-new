@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danz Stream — Nonton Anime Subtitle Indonesia HD & 1080p VIP</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          colors: {
+            obsidian: '#07090f',
+            card: '#0e1320',
+            crimson: '#e11d48',
+            gold: '#f59e0b'
+          },
+          animation: {
+            'shimmer': 'shimmer 3s linear infinite',
+            'float': 'float 4s ease-in-out infinite',
+          },
+          keyframes: {
+            shimmer: {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-6px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #07090f; color: #f1f5f9; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #07090f; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #e11d48; }
+    .luxury-gold-card {
+      background: linear-gradient(135deg, #18130a 0%, #2c1f09 35%, #12151f 70%, #2b1e08 100%);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      box-shadow: 0 20px 50px -12px rgba(245, 158, 11, 0.25), inset 0 1px 1px rgba(255, 237, 179, 0.3);
+    }
+    .gold-shimmer-line {
+      background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.35), transparent);
+      background-size: 200% 100%;
+    }
+    .cinema-dim {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.92); z-index: 40;
+      transition: opacity 0.3s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-rose-600 selection:text-white">
+
+  <div id="cinemaOverlay" class="cinema-dim hidden" onclick="toggleCinemaMode()"></div>
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-50 bg-[#07090f]/90 backdrop-blur-xl border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+      <!-- Brand -->
+      <div class="flex items-center gap-6">
+        <button onclick="navigate('home')" class="flex items-center gap-2.5 group text-left">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-600 to-amber-500 flex items-center justify-center shadow-lg shadow-rose-600/25 group-hover:scale-105 transition">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <div>
+            <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-amber-300 bg-clip-text text-transparent">DANZ STREAM</span>
+            <span class="block text-[10px] text-slate-400 tracking-widest uppercase -mt-1">Anime Sub Indo</span>
+          </div>
+        </button>
+
+        <nav class="hidden md:flex items-center gap-1 text-sm font-semibold">
+          <button onclick="navigate('home')" id="nav-home" class="nav-btn px-3.5 py-2 rounded-lg text-white bg-slate-800/80">Beranda</button>
+          <button onclick="navigate('schedule')" id="nav-schedule" class="nav-btn px-3.5 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 transition">Jadwal Rilis</button>
+          <button onclick="navigate('genres')" id="nav-genres" class="nav-btn px-3.5 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/50 transition">Daftar Genre</button>
+          <button onclick="openVipModal()" class="ml-1 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-500/40 text-amber-300 hover:border-amber-400 flex items-center gap-1.5 transition">
+            <span>👑</span> <span>VIP 1080p</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="flex-1 max-w-md relative">
+        <div class="relative flex items-center">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/></svg>
+          <input id="searchInput" type="text" oninput="handleSearch(this.value)" placeholder="Cari judul anime (JJK, One Piece, Solo Leveling...)"
+            class="w-full bg-slate-900/90 border border-slate-700/80 focus:border-rose-500 rounded-xl pl-10 pr-9 py-2 text-sm text-white placeholder-slate-400 outline-none transition" />
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 text-slate-400 hover:text-white text-xs">✕</button>
+        </div>
+      </div>
+
+      <!-- User Actions -->
+      <div id="authHeaderSlot" class="flex items-center gap-2.5"></div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEW CONTAINER -->
+  <main id="appMain" class="flex-1 max-w-7xl w-full mx-auto px-4 py-6"></main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-[#05070c] mt-16 py-8">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-200">DANZ STREAM</span>
+        <span>•</span>
+        <span>Platform Streaming Anime Subtitle Indonesia</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="navigate('home')" class="hover:text-white">Beranda</button>
+        <button onclick="navigate('schedule')" class="hover:text-white">Jadwal</button>
+        <button onclick="openVipModal()" class="text-amber-400 hover:text-amber-300 font-semibold">Upgrade VIP</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL AUTH (LOGIN / REGISTER) -->
+  <div id="authModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="bg-[#0e1320] border border-slate-700/80 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+      <div class="flex items-center gap-2 mb-5">
+        <span class="text-2xl">🎬</span>
+        <div>
+          <h3 class="font-extrabold text-lg text-white">Akun Danz Stream</h3>
+          <p class="text-xs text-slate-400">Simpan riwayat tontonan, watchlist & status VIP</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 bg-slate-900 p-1 rounded-xl mb-5 border border-slate-800">
+        <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-2 rounded-lg text-xs font-bold bg-rose-600 text-white">Masuk</button>
+        <button id="tabRegBtn" onclick="switchAuthTab('register')" class="py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white">Daftar Baru</button>
+      </div>
+
+      <form id="authForm" onsubmit="submitAuth(event)" class="space-y-3.5">
+        <div id="regNameGroup" class="hidden">
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Username</label>
+          <input id="authName" type="text" placeholder="Contoh: ZidanNime" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-rose-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Email</label>
+          <input id="authEmail" type="email" required placeholder="nama@email.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-rose-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+          <input id="authPass" type="password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-rose-500" />
+        </div>
+        <p id="authError" class="text-xs text-rose-400 hidden"></p>
+        <button type="submit" id="authSubmitBtn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-500 hover:to-rose-400 font-bold text-sm text-white shadow-lg shadow-rose-600/25 transition">
+          Masuk Sekarang
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- LUXURY VIP PAYMENT MODAL -->
+  <div id="vipModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto">
+    <div class="bg-[#0b0e17] border border-amber-500/40 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-[0_0_80px_-15px_rgba(245,158,11,0.35)] relative my-auto">
+      <button onclick="closeVipModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800/80 text-slate-300 hover:text-white flex items-center justify-center">✕</button>
+
+      <!-- Header Badge -->
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs font-bold mb-3">
+        <span>👑</span> <span>DANZ STREAM ROYAL VIP PASS</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+        Pengalaman Nonton <span class="bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-500 bg-clip-text text-transparent">1080p Ultra-HD</span> Tanpa Batas
+      </h2>
+      <p class="text-xs sm:text-sm text-slate-400 mt-1">Akses server pribadi berkecepatan tinggi, unduhan batch Full HD, dan lencana mahkota eksklusif.</p>
+
+      <!-- 3D LUXURY MEMBERSHIP CARD PREVIEW -->
+      <div class="mt-6 luxury-gold-card rounded-2xl p-5 sm:p-6 relative overflow-hidden animate-float">
+        <div class="absolute inset-0 gold-shimmer-line animate-shimmer pointer-events-none"></div>
+        <div class="flex items-start justify-between relative z-10">
+          <div>
+            <p class="text-[10px] uppercase tracking-[0.25em] text-amber-300/80 font-bold">Official Priority Access</p>
+            <h3 class="text-xl font-extrabold text-white mt-1 tracking-wide">DANZ VIP BLACK-GOLD</h3>
+          </div>
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-300 to-amber-600 flex items-center justify-center text-slate-950 font-black text-lg shadow-lg">
+            👑
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap items-end justify-between gap-4 relative z-10">
+          <div>
+            <p class="text-[11px] text-amber-200/70">Pemegang Kartu</p>
+            <p id="vipCardHolderName" class="text-sm font-bold text-amber-100 tracking-wider uppercase">MEMBER DANZ STREAM</p>
+          </div>
+          <div class="text-right">
+            <p class="text-[11px] text-amber-200/70">Investasi Member</p>
+            <p id="vipPriceDisplay" class="text-2xl font-black text-amber-300">Rp 30.000 <span class="text-xs font-medium text-amber-200/80">/ Aktif</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Benefit Grid & DANA Transfer Box -->
+      <div class="grid sm:grid-cols-2 gap-5 mt-6">
+        <!-- Benefits -->
+        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 space-y-2.5">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-amber-400">Keuntungan VIP Eksklusif</h4>
+          <ul class="space-y-2 text-xs text-slate-300">
+            <li class="flex items-center gap-2"><span class="text-amber-400">✦</span> Server VIP-1 1080p Full HD Anti-Buffering</li>
+            <li class="flex items-center gap-2"><span class="text-amber-400">✦</span> Bebas Iklan & Pop-up di Seluruh Halaman</li>
+            <li class="flex items-center gap-2"><span class="text-amber-400">✦</span> Link Download 1080p High-Bitrate Terbuka</li>
+            <li class="flex items-center gap-2"><span class="text-amber-400">✦</span> Lencana Mahkota Emas di Profil & Komentar</li>
+          </ul>
+        </div>
+
+        <!-- DANA Payment Box -->
+        <div class="bg-gradient-to-b from-sky-950/60 to-slate-900/90 border border-sky-500/40 rounded-2xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-0.5 rounded-md bg-sky-500 text-white font-black text-[11px] tracking-wider">DANA E-WALLET</span>
+              <span class="text-[11px] text-sky-300 font-semibold">Transfer Instan</span>
+            </div>
+            <div class="mt-3 bg-slate-950/80 border border-sky-500/30 rounded-xl p-3 flex items-center justify-between gap-2">
+              <div>
+                <p class="text-[10px] text-slate-400">Nomor Rekening DANA Tujuan</p>
+                <p id="danaNumberText" class="text-base font-extrabold text-white tracking-wider">0812-3456-7890</p>
+                <p id="danaOwnerText" class="text-[11px] text-sky-300">a.n. Danz Stream Official</p>
+              </div>
+              <button onclick="copyDanaNumber()" id="copyDanaBtn" class="px-3 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs transition shrink-0">
+                Salin
+              </button>
+            </div>
+            <p id="danaNoteText" class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+              Transfer sesuai nominal lalu kirim konfirmasi di bawah agar Owner segera mengaktifkan status VIP Anda.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Form -->
+      <form onsubmit="submitVipConfirmation(event)" class="mt-5 pt-5 border-t border-slate-800/90 flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
+        <div class="flex-1">
+          <label class="block text-[11px] font-bold text-slate-300 mb-1">Nama Pengirim di DANA / Catatan Transfer</label>
+          <input id="vipSenderInput" type="text" required placeholder="Contoh: DANA a.n. Ahmad - Sudah transfer Rp 30.000"
+            class="w-full bg-slate-900 border border-slate-700 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none" />
+        </div>
+        <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:brightness-110 text-slate-950 font-extrabold text-xs shadow-lg shadow-amber-500/25 transition shrink-0">
+          Konfirmasi Sudah Transfer 👑
+        </button>
+      </form>
+      <p id="vipFeedbackMsg" class="text-xs text-emerald-400 font-semibold mt-2.5 hidden"></p>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toastBox" class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2"></div>
+
+  <script>
+    // =========================================================
+    // 1. SHARED STORAGE LAYER (TERHUBUNG DENGAN owner-admin.html)
+    // =========================================================
+    const KEYS = {
+      USERS: 'danz_users_store',
+      SESSION: 'danz_active_session',
+      PENDING: 'danz_pending_payments',
+      VIP_OVERRIDES: 'danz_vip_overrides',
+      PAYMENT_CFG: 'danz_cfg_payment',
+      CUSTOM_STREAMS: 'danz_episode_streams',
+      POSTER_CACHE: 'danz_poster_cache_v3',
+      COMMENTS: 'danz_anime_comments'
+    };
+
+    // Sample video stream HD terjamin jalan 100% di semua browser sebagai fallback default
+    const DEFAULT_PLAYABLE_STREAMS = [
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4'
+    ];
+
+    // =========================================================
+    // 2. KATALOG ANIME LENGKAP + TRAILER YOUTUBE + EPISODE AKTIF
+    // =========================================================
+    const ANIME_CATALOG = [
+      {
+        id: 52991, title: 'Sousou no Frieren', alt: 'Frieren: Beyond Journey\'s End',
+        aliases: ['frieren', 'sousou no frieren'],
+        score: '9.33', type: 'TV', status: 'Complete', totalEp: 28, duration: '24 Menit',
+        studio: 'Madhouse', producer: 'Aniplex, Dentsu', aired: 'Sep 2023', day: 'Jumat', time: '23:00 WIB',
+        genres: ['Adventure', 'Drama', 'Fantasy'],
+        ytTrailer: 'Iwr1aLEDpe4',
+        synopsis: 'Setelah mengalahkan Raja Iblis bersama kelompok pahlawannya, penyihir elf abadi Frieren memulai perjalanan baru untuk memahami makna kehidupan dan hati manusia.'
+      },
+      {
+        id: 51009, title: 'Jujutsu Kaisen Season 2', alt: 'JJK S2 Shibuya Incident',
+        aliases: ['jjk', 'jujutsu kaisen', 'gojo', 'sukuna'],
+        score: '8.78', type: 'TV', status: 'Complete', totalEp: 23, duration: '24 Menit',
+        studio: 'MAPPA', producer: 'TOHO animation', aired: 'Jul 2023', day: 'Kamis', time: '23:56 WIB',
+        genres: ['Action', 'Supernatural', 'Fantasy'],
+        ytTrailer: 'PKHQuhiaRMQ',
+        synopsis: 'Masa lalu Satoru Gojo dan Suguru Geto terungkap sebelum insiden besar penyegelan di Shibuya mengguncang seluruh dunia penyihir jujutsu.'
+      },
+      {
+        id: 52299, title: 'Solo Leveling', alt: 'Ore dake Level Up na Ken',
+        aliases: ['solo leveling', 'sung jinwoo', 'ore dake level up'],
+        score: '8.31', type: 'TV', status: 'Complete', totalEp: 12, duration: '24 Menit',
+        studio: 'A-1 Pictures', producer: 'Aniplex, Crunchyroll', aired: 'Jan 2024', day: 'Sabtu', time: '23:30 WIB',
+        genres: ['Action', 'Adventure', 'Fantasy'],
+        ytTrailer: '1kQw6b23k0g',
+        synopsis: 'Sung Jinwoo, hunter terlemah umat manusia, memperoleh sistem misterius setelah selamat dari dungeon ganda mematikan yang membuatnya mampu naik level tanpa batas.'
+      },
+      {
+        id: 21, title: 'One Piece', alt: 'One Piece Egghead Arc',
+        aliases: ['one piece', 'luffy', 'zoro', 'egghead'],
+        score: '8.72', type: 'TV', status: 'On-Going', totalEp: 1122, duration: '24 Menit',
+        studio: 'Toei Animation', producer: 'Fuji TV, Shueisha', aired: 'Okt 1999', day: 'Minggu', time: '09:30 WIB',
+        genres: ['Action', 'Adventure', 'Fantasy'],
+        ytTrailer: 'MCb13lbVGE0',
+        synopsis: 'Monkey D. Luffy bersama kru Bajak Laut Topi Jerami menjelajahi lautan Grand Line demi menemukan harta karun legendaris One Piece dan menjadi Raja Bajak Laut.'
+      },
+      {
+        id: 55701, title: 'Kimetsu no Yaiba: Hashira Geiko-hen', alt: 'Demon Slayer Hashira Training',
+        aliases: ['kimetsu no yaiba', 'demon slayer', 'kny', 'tanjiro'],
+        score: '8.25', type: 'TV', status: 'Complete', totalEp: 8, duration: '26 Menit',
+        studio: 'ufotable', producer: 'Aniplex, Shueisha', aired: 'Mei 2024', day: 'Minggu', time: '23:15 WIB',
+        genres: ['Action', 'Supernatural', 'Fantasy'],
+        ytTrailer: 'Tf31dGdlWxE',
+        synopsis: 'Tanjiro dan para anggota Korps Pembasmi Iblis menjalani pelatihan keras bersama para Hashira untuk mempersiapkan pertempuran terakhir melawan Muzan Kibutsuji.'
+      },
+      {
+        id: 16498, title: 'Shingeki no Kyojin', alt: 'Attack on Titan',
+        aliases: ['aot', 'snk', 'attack on titan', 'shingeki no kyojin', 'eren'],
+        score: '8.55', type: 'TV', status: 'Complete', totalEp: 25, duration: '24 Menit',
+        studio: 'Wit Studio', producer: 'Production I.G, Pony Canyon', aired: 'Apr 2013', day: 'Sabtu', time: '22:00 WIB',
+        genres: ['Action', 'Drama', 'Supernatural'],
+        ytTrailer: 'MGRm4IzK1SQ',
+        synopsis: 'Umat manusia bertahan hidup di balik tembok raksasa untuk melindungi diri dari Titan pemakan manusia, hingga kemunculan Titan Kolosal menghancurkan kedamaian mereka.'
+      },
+      {
+        id: 1735, title: 'Naruto: Shippuden', alt: 'Naruto Shippuden Sub Indo',
+        aliases: ['naruto', 'shippuden', 'sasuke', 'itachi'],
+        score: '8.27', type: 'TV', status: 'Complete', totalEp: 500, duration: '23 Menit',
+        studio: 'Pierrot', producer: 'TV Tokyo, Aniplex', aired: 'Feb 2007', day: 'Kamis', time: '19:30 WIB',
+        genres: ['Action', 'Adventure', 'Fantasy'],
+        ytTrailer: '1dy2zPPrKD0',
+        synopsis: 'Setelah berlatih selama dua setengah tahun bersama Jiraiya, Naruto Uzumaki kembali ke Konoha untuk menyelamatkan Sasuke dan menghadapi ancaman organisasi Akatsuki.'
+      },
+      {
+        id: 57555, title: 'Chainsaw Man', alt: 'Chainsaw Man Sub Indo',
+        aliases: ['chainsaw man', 'denji', 'makima'],
+        score: '8.48', type: 'TV', status: 'Complete', totalEp: 12, duration: '24 Menit',
+        studio: 'MAPPA', producer: 'MAPPA', aired: 'Okt 2022', day: 'Rabu', time: '00:00 WIB',
+        genres: ['Action', 'Supernatural'],
+        ytTrailer: 'v4yLeNt-kCU',
+        synopsis: 'Denji bergabung dengan iblis gergaji Pochita dan direkrut oleh Pemburu Iblis Keamanan Publik untuk membasmi iblis berbahaya di Jepang.'
+      },
+      {
+        id: 54857, title: 'Blue Lock', alt: 'Blue Lock Season 1 & 2',
+        aliases: ['blue lock', 'isagi', 'bachira'],
+        score: '8.22', type: 'TV', status: 'On-Going', totalEp: 24, duration: '24 Menit',
+        studio: '8bit', producer: 'Bandai Namco', aired: 'Okt 2022', day: 'Sabtu', time: '23:30 WIB',
+        genres: ['Sports', 'Drama'],
+        ytTrailer: 'IVsII3dLbWc',
+        synopsis: '300 striker muda terbaik Jepang dikumpulkan dalam fasilitas isolasi Blue Lock untuk menciptakan penyerang paling egois yang akan membawa Jepang menjuarai Piala Dunia.'
+      },
+      {
+        id: 55888, title: 'Tokidoki Bosotto Russia-go de Dereru Tonari no Alya-san', alt: 'Roshidere / Alya Sometimes Hides Her Feelings in Russian',
+        aliases: ['roshidere', 'alya', 'russia'],
+        score: '7.85', type: 'TV', status: 'Complete', totalEp: 12, duration: '24 Menit',
+        studio: 'Doga Kobo', producer: 'Kadokawa', aired: 'Jul 2024', day: 'Rabu', time: '22:30 WIB',
+        genres: ['Romance', 'Comedy'],
+        ytTrailer: '3fV22T8rJ4M',
+        synopsis: 'Alisa Mikhailovna Kujou sering menggoda teman sebangkunya Masachika Kuze dengan gumaman manis dalam bahasa Rusia, tanpa tahu bahwa Masachika fasih memahaminya.'
+      },
+      {
+        id: 39535, title: 'Mushoku Tensei: Isekai Ittara Honki Dasu', alt: 'Jobless Reincarnation',
+        aliases: ['mushoku tensei', 'rudeus', 'isekai'],
+        score: '8.36', type: 'TV', status: 'Complete', totalEp: 23, duration: '23 Menit',
+        studio: 'Studio Bind', producer: 'Egg Firm', aired: 'Jan 2021', day: 'Minggu', time: '23:00 WIB',
+        genres: ['Drama', 'Fantasy', 'Adventure'],
+        ytTrailer: 'ket7q3y8f9M',
+        synopsis: 'Seorang pria yang bereinkarnasi ke dunia pedang dan sihir sebagai Rudeus Greyrat bertekad menjalani kehidupan barunya dengan sungguh-sungguh tanpa penyesalan.'
+      },
+      {
+        id: 37430, title: 'Tensei shitara Slime Datta Ken', alt: 'That Time I Got Reincarnated as a Slime',
+        aliases: ['tensura', 'slime', 'rimuru'],
+        score: '8.14', type: 'TV', status: 'On-Going', totalEp: 48, duration: '23 Menit',
+        studio: '8bit', producer: 'Bandai Namco', aired: 'Okt 2018', day: 'Jumat', time: '22:00 WIB',
+        genres: ['Action', 'Adventure', 'Fantasy'],
+        ytTrailer: 'uOzwqb74K34',
+        synopsis: 'Satoru Mikami bereinkarnasi di dunia fantasi sebagai slime bernama Rimuru Tempest dan membangun negara federasi monster yang damai namun disegani.'
+      },
+      {
+        id: 30276, title: 'One Punch Man', alt: 'One Punch Man Sub Indo',
+        aliases: ['opm', 'one punch man', 'saitama', 'genos'],
+        score: '8.49', type: 'TV', status: 'Complete', totalEp: 12, duration: '24 Menit',
+        studio: 'Madhouse', producer: 'TV Tokyo, Bandai Visual', aired: 'Okt 2015', day: 'Senin', time: '00:05 WIB',
+        genres: ['Action', 'Comedy', 'Sci-Fi'],
+        ytTrailer: 'Poo5lqoWSGw',
+        synopsis: 'Saitama mampu mengalahkan musuh terkuat sekalipun hanya dengan satu pukulan, membuatnya merasa bosan dan mencari lawan yang benar-benar sepadan.'
+      },
+      {
+        id: 11757, title: 'Sword Art Online', alt: 'SAO Aincrad',
+        aliases: ['sao', 'sword art online', 'kirito', 'asuna'],
+        score: '7.21', type: 'TV', status: 'Complete', totalEp: 25, duration: '23 Menit',
+        studio: 'A-1 Pictures', producer: 'Aniplex, Genco', aired: 'Jul 2012', day: 'Sabtu', time: '23:00 WIB',
+        genres: ['Action', 'Adventure', 'Fantasy', 'Romance'],
+        ytTrailer: '6ohYYtxfDCg',
+        synopsis: 'Sepuluh ribu pemain terjebak dalam game VRMMORPG Sword Art Online, di mana kematian di dalam game berarti kematian di dunia nyata.'
+      },
+      {
+        id: 35507, title: 'Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e', alt: 'Classroom of the Elite',
+        aliases: ['cote', 'classroom of the elite', 'ayanokoji'],
+        score: '7.86', type: 'TV', status: 'Complete', totalEp: 12, duration: '24 Menit',
+        studio: 'Lerche', producer: 'Kadokawa', aired: 'Jul 2017', day: 'Rabu', time: '21:30 WIB',
+        genres: ['Drama', 'Mystery'],
+        ytTrailer: 'iY0035C01K0',
+        synopsis: 'Di SMA Koudo Ikusei yang menerapkan sistem meritokrasi ketat, Kiyotaka Ayanokouji dari Kelas D menyembunyikan kecerdasan luar biasanya di balik sikap dingin.'
+      },
+      {
+        id: 11061, title: 'Hunter x Hunter (2011)', alt: 'Hunter x Hunter Sub Indo',
+        aliases: ['hxh', 'hunter x hunter', 'gon', 'killua'],
+        score: '9.03', type: 'TV', status: 'Complete', totalEp: 148, duration: '23 Menit',
+        studio: 'Madhouse', producer: 'VAP, Nippon Television', aired: 'Okt 2011', day: 'Selasa', time: '18:00 WIB',
+        genres: ['Action', 'Adventure', 'Fantasy'],
+        ytTrailer: 'd6kBeJjTGnY',
+        synopsis: 'Gon Freecss mengikuti ujian Hunter yang berbahaya demi menemukan ayahnya yang merupakan Hunter legendaris, ditemani sahabat barunya Killua, Kurapika, dan Leorio.'
+      }
+    ];
+
+    // =========================================================
+    // 3. STATE & DATABASE HELPERS
+    // =========================================================
+    let state = {
+      view: 'home',
+      searchQuery: '',
+      selectedGenre: 'All',
+      scheduleDay: 'Minggu',
+      currentAnime: null,
+      currentEp: 1,
+      currentServer: 'vip-1080p',
+      cinemaMode: false,
+      authMode: 'login'
+    };
+
+    function getUsers() {
+      try { return JSON.parse(localStorage.getItem(KEYS.USERS)) || []; } catch { return []; }
+    }
+    function saveUsers(users) {
+      localStorage.setItem(KEYS.USERS, JSON.stringify(users));
+    }
+    function getVipOverrides() {
+      try { return JSON.parse(localStorage.getItem(KEYS.VIP_OVERRIDES)) || {}; } catch { return {}; }
+    }
+    function getPaymentConfig() {
+      try {
+        return Object.assign({
+          danaNumber: '0812-3456-7890',
+          danaOwner: 'Danz Stream Official',
+          vipPrice: 30000,
+          note: 'Transfer sesuai nominal lalu kirim konfirmasi di bawah agar Owner segera mengaktifkan status VIP Anda.'
+        }, JSON.parse(localStorage.getItem(KEYS.PAYMENT_CFG)) || {});
+      } catch {
+        return { danaNumber: '0812-3456-7890', danaOwner: 'Danz Stream Official', vipPrice: 30000, note: '' };
+      }
+    }
+    function getCustomStreams() {
+      try { return JSON.parse(localStorage.getItem(KEYS.CUSTOM_STREAMS)) || {}; } catch { return {}; }
+    }
+
+    function getCurrentUser() {
+      try {
+        const sessionEmail = localStorage.getItem(KEYS.SESSION);
+        if (!sessionEmail) return null;
+        const users = getUsers();
+        const user = users.find(u => u.email.toLowerCase() === sessionEmail.toLowerCase());
+        if (!user) return null;
+        const overrides = getVipOverrides();
+        if (overrides[user.email.toLowerCase()] !== undefined) {
+          user.isVip = !!overrides[user.email.toLowerCase()];
+        }
+        return user;
+      } catch { return null; }
+    }
+
+    function formatRupiah(num) {
+      return 'Rp ' + Number(num || 30000).toLocaleString('id-ID');
+    }
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      box.innerHTML = `<span>✨</span><span>${msg}</span>`;
+      box.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => box.classList.add('hidden'), 3500);
+    }
+
+    // =========================================================
+    // 4. 2-LAYER POSTER ENGINE (0ms SVG + ANILIST HYDRATION)
+    // =========================================================
+    function getPosterCache() {
+      try { return JSON.parse(localStorage.getItem(KEYS.POSTER_CACHE)) || {}; } catch { return {}; }
+    }
+
+    function buildSvgFallback(anime) {
+      const palette = {
+        Action: ['#e11d48', '#4c0519'],
+        Fantasy: ['#7c3aed', '#2e1065'],
+        Adventure: ['#0284c7', '#082f49'],
+        Romance: ['#ec4899', '#500724'],
+        Sports: ['#ea580c', '#431407'],
+        Drama: ['#4f46e5', '#1e1b4b'],
+        'Sci-Fi': ['#0d9488', '#042f2e'],
+        Supernatural: ['#9333ea', '#3b0764']
+      };
+      const g = (anime.genres && anime.genres[0]) || 'Action';
+      const [c1, c2] = palette[g] || ['#e11d48', '#0f172a'];
+      const safeTitle = (anime.title || 'Anime').slice(0, 28).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="${c1}"/>
+            <stop offset="100%" stop-color="${c2}"/>
+          </linearGradient>
+        </defs>
+        <rect width="300" height="450" fill="url(#bg)"/>
+        <circle cx="240" cy="70" r="95" fill="rgba(255,255,255,0.08)"/>
+        <circle cx="40" cy="390" r="110" fill="rgba(0,0,0,0.28)"/>
+        <rect x="20" y="20" width="94" height="24" rx="6" fill="rgba(0,0,0,0.45)"/>
+        <text x="32" y="36" fill="#fbbf24" font-family="sans-serif" font-size="11" font-weight="bold">DANZ HD</text>
+        <text x="20" y="360" fill="#ffffff" font-family="sans-serif" font-size="16" font-weight="bold">${safeTitle}</text>
+        <text x="20" y="385" fill="rgba(255,255,255,0.75)" font-family="sans-serif" font-size="12">${g} • Sub Indo</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+
+    function renderPosterImg(anime, extraClass = '') {
+      const cache = getPosterCache();
+      const cachedUrl = cache[anime.id] || anime.coverUrl || '';
+      const fallbackSvg = buildSvgFallback(anime);
+      return `
+        <div class="relative overflow-hidden bg-slate-900 aspect-[2/3] ${extraClass}">
+          <img src="${fallbackSvg}" alt="${anime.title}" class="w-full h-full object-cover" />
+          ${cachedUrl ? `<img src="${cachedUrl}" referrerpolicy="no-referrer" alt="${anime.title}" onerror="this.remove()" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300" />` : ''}
+        </div>
+      `;
+    }
+
+    async function hydratePostersBatch() {
+      const cache = getPosterCache();
+      const missingIds = ANIME_CATALOG.map(a => a.id).filter(id => !cache[id]);
+      if (!missingIds.length) return;
+
+      try {
+        const query = `query ($ids: [Int]) { Page(perPage: 50) { media(idMal_in: $ids, type: ANIME) { idMal coverImage { large } } } }`;
+        const res = await fetch('https://graphql.anilist.co', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, variables: { ids: missingIds } })
+        });
+        const json = await res.json();
+        const media = json?.data?.Page?.media || [];
+        let updated = false;
+        media.forEach(m => {
+          if (m.idMal && m.coverImage?.large) {
+            cache[m.idMal] = m.coverImage.large;
+            updated = true;
+          }
+        });
+        if (updated) {
+          localStorage.setItem(KEYS.POSTER_CACHE, JSON.stringify(cache));
+          if (state.view === 'home' || state.view === 'schedule' || state.view === 'genres') renderApp();
+        }
+      } catch (e) { /* Tetap gunakan SVG Layer 1 jika offline */ }
+    }
+
+    // =========================================================
+    // 5. AUTHENTICATION & HEADER RENDER
+    // =========================================================
+    function renderHeaderAuth() {
+      const slot = document.getElementById('authHeaderSlot');
+      const user = getCurrentUser();
+      if (!user) {
+        slot.innerHTML = `
+          <button onclick="openAuthModal('login')" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-lg shadow-rose-600/20 transition">
+            Masuk / Daftar
+          </button>
+        `;
+        return;
+      }
+      slot.innerHTML = `
+        <button onclick="navigate('dashboard')" class="flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 border ${user.isVip ? 'border-amber-500/60' : 'border-slate-700'} px-3 py-1.5 rounded-xl transition">
+          <div class="w-7 h-7 rounded-lg ${user.isVip ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950' : 'bg-rose-600 text-white'} font-extrabold text-xs flex items-center justify-center">
+            ${(user.name || 'U')[0].toUpperCase()}
+          </div>
+          <div class="text-left hidden sm:block">
+            <div class="text-xs font-bold text-white flex items-center gap-1">
+              <span>${user.name}</span>
+              ${user.isVip ? '<span class="text-amber-400">👑</span>' : ''}
+            </div>
+            <div class="text-[10px] ${user.isVip ? 'text-amber-400 font-bold' : 'text-slate-400'}">
+              ${user.isVip ? 'Member VIP 1080p' : 'Member Reguler'}
+            </div>
+          </div>
+        </button>
+      `;
+    }
+
+    function openAuthModal(mode = 'login') {
+      state.authMode = mode;
+      switchAuthTab(mode);
+      document.getElementById('authModal').classList.remove('hidden');
+      document.getElementById('authModal').classList.add('flex');
+    }
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+      document.getElementById('authModal').classList.remove('flex');
+    }
+    function switchAuthTab(mode) {
+      state.authMode = mode;
+      const isReg = mode === 'register';
+      document.getElementById('regNameGroup').classList.toggle('hidden', !isReg);
+      document.getElementById('tabLoginBtn').className = !isReg ? 'py-2 rounded-lg text-xs font-bold bg-rose-600 text-white' : 'py-2 rounded-lg text-xs font-bold text-slate-400';
+      document.getElementById('tabRegBtn').className = isReg ? 'py-2 rounded-lg text-xs font-bold bg-rose-600 text-white' : 'py-2 rounded-lg text-xs font-bold text-slate-400';
+      document.getElementById('authSubmitBtn').textContent = isReg ? 'Buat Akun Sekarang' : 'Masuk Sekarang';
+      document.getElementById('authError').classList.add('hidden');
+    }
+
+    function submitAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById('authEmail').value.trim();
+      const pass = document.getElementById('authPass').value.trim();
+      const name = document.getElementById('authName').value.trim() || email.split('@')[0];
+      const errEl = document.getElementById('authError');
+      const users = getUsers();
+
+      if (state.authMode === 'register') {
+        if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+          errEl.textContent = 'Email sudah terdaftar. Silakan masuk.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        const overrides = getVipOverrides();
+        const newUser = {
+          id: 'usr_' + Date.now(),
+          name,
+          email,
+          password: pass,
+          isVip: !!overrides[email.toLowerCase()],
+          watchlist: [],
+          history: [],
+          joinedAt: new Date().toLocaleDateString('id-ID')
+        };
+        users.push(newUser);
+        saveUsers(users);
+        localStorage.setItem(KEYS.SESSION, email);
+        closeAuthModal();
+        renderHeaderAuth();
+        renderApp();
+        showToast(`Selamat datang, ${name}!`);
+      } else {
+        const found = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === pass);
+        if (!found) {
+          errEl.textContent = 'Email atau password salah. Jika belum punya akun, klik tab Daftar Baru.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        localStorage.setItem(KEYS.SESSION, found.email);
+        closeAuthModal();
+        renderHeaderAuth();
+        renderApp();
+        showToast(`Berhasil masuk sebagai ${found.name}`);
+      }
+    }
+
+    function logoutUser() {
+      localStorage.removeItem(KEYS.SESSION);
+      renderHeaderAuth();
+      navigate('home');
+      showToast('Anda telah keluar dari akun.');
+    }
+
+    // =========================================================
+    // 6. LUXURY VIP MODAL & DANA CONFIRMATION
+    // =========================================================
+    function openVipModal() {
+      const cfg = getPaymentConfig();
+      const user = getCurrentUser();
+      document.getElementById('vipCardHolderName').textContent = user ? user.name.toUpperCase() : 'MEMBER DANZ STREAM';
+      document.getElementById('vipPriceDisplay').innerHTML = `${formatRupiah(cfg.vipPrice)} <span class="text-xs font-medium text-amber-200/80">/ Aktif</span>`;
+      document.getElementById('danaNumberText').textContent = cfg.danaNumber;
+      document.getElementById('danaOwnerText').textContent = `a.n. ${cfg.danaOwner}`;
+      document.getElementById('danaNoteText').textContent = cfg.note;
+      document.getElementById('vipFeedbackMsg').classList.add('hidden');
+      document.getElementById('vipModal').classList.remove('hidden');
+      document.getElementById('vipModal').classList.add('flex');
+    }
+    function closeVipModal() {
+      document.getElementById('vipModal').classList.add('hidden');
+      document.getElementById('vipModal').classList.remove('flex');
+    }
+    function copyDanaNumber() {
+      const num = document.getElementById('danaNumberText').textContent.replace(/[^0-9]/g, '');
+      navigator.clipboard?.writeText(num);
+      const btn = document.getElementById('copyDanaBtn');
+      btn.textContent = 'Tersalin ✓';
+      setTimeout(() => btn.textContent = 'Salin', 2000);
+      showToast('Nomor DANA berhasil disalin!');
+    }
+
+    function submitVipConfirmation(e) {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user) {
+        closeVipModal();
+        openAuthModal('login');
+        showToast('Silakan masuk atau daftar akun terlebih dahulu sebelum konfirmasi VIP.');
+        return;
+      }
+      const senderNote = document.getElementById('vipSenderInput').value.trim();
+      const cfg = getPaymentConfig();
+      const pendings = JSON.parse(localStorage.getItem(KEYS.PENDING) || '[]');
+      pendings.unshift({
+        id: 'pay_' + Date.now(),
+        userEmail: user.email,
+        userName: user.name,
+        amount: cfg.vipPrice,
+        senderNote,
+        status: 'pending',
+        createdAt: new Date().toLocaleString('id-ID')
+      });
+      localStorage.setItem(KEYS.PENDING, JSON.stringify(pendings));
+      document.getElementById('vipSenderInput').value = '';
+      const fb = document.getElementById('vipFeedbackMsg');
+      fb.textContent = '✓ Konfirmasi pembayaran berhasil dikirim! Status VIP Anda akan aktif otomatis segera setelah diverifikasi Owner.';
+      fb.classList.remove('hidden');
+      showToast('Konfirmasi transfer DANA terkirim ke Owner!');
+    }
+
+    // =========================================================
+    // 7. SEARCH & NAVIGATION
+    // =========================================================
+    function navigate(view, animeId = null, ep = 1) {
+      state.view = view;
+      if (animeId) {
+        const found = ANIME_CATALOG.find(a => a.id === animeId) || state.currentAnime;
+        state.currentAnime = found;
+        state.currentEp = ep;
+        const user = getCurrentUser();
+        state.currentServer = user?.isVip ? 'vip-1080p' : 'hd-720p';
+        saveWatchHistory(found, ep);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderApp();
+    }
+
+    function handleSearch(val) {
+      state.searchQuery = val.trim();
+      document.getElementById('clearSearchBtn').classList.toggle('hidden', !state.searchQuery);
+      if (state.searchQuery) {
+        state.view = 'search';
+      } else if (state.view === 'search') {
+        state.view = 'home';
+      }
+      renderApp();
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      handleSearch('');
+    }
+
+    function saveWatchHistory(anime, ep) {
+      const user = getCurrentUser();
+      if (!user || !anime) return;
+      const users = getUsers();
+      const idx = users.findIndex(u => u.email === user.email);
+      if (idx === -1) return;
+      const hist = users[idx].history || [];
+      const filtered = hist.filter(h => h.animeId !== anime.id);
+      filtered.unshift({ animeId: anime.id, title: anime.title, ep, watchedAt: new Date().toLocaleString('id-ID') });
+      users[idx].history = filtered.slice(0, 20);
+      saveUsers(users);
+    }
+
+    function toggleWatchlist(animeId) {
+      const user = getCurrentUser();
+      if (!user) { openAuthModal('login'); return; }
+      const users = getUsers();
+      const idx = users.findIndex(u => u.email === user.email);
+      if (idx === -1) return;
+      const wl = users[idx].watchlist || [];
+      const exists = wl.includes(animeId);
+      users[idx].watchlist = exists ? wl.filter(id => id !== animeId) : [animeId, ...wl];
+      saveUsers(users);
+      showToast(exists ? 'Dihapus dari Watchlist' : 'Disimpan ke Watchlist ❤️');
+      renderApp();
+    }
+
+    // =========================================================
+    // 8. VIDEO PLAYER RESOLVER (CUSTOM OWNER STREAM + TRAILER + MP4)
+    // =========================================================
+    function resolveStreamMedia(anime, ep, server) {
+      const customStreams = getCustomStreams();
+      const key = `${anime.id}_ep_${ep}`;
+      const customEntry = customStreams[key];
+
+      // 1. Prioritaskan link video / embed yang ditambahkan Owner di owner-admin.html
+      if (customEntry && customEntry.url) {
+        const url = customEntry.url.trim();
+        const isEmbed = url.includes('<iframe') || url.includes('youtube.com/embed') || url.includes('drive.google.com') || url.includes('streamtape') || url.includes('dood');
+        return { type: isEmbed ? 'embed' : 'mp4', url, label: customEntry.label || `Custom Server (${server.toUpperCase()})` };
+      }
+
+      // 2. Jika user memilih server Official Trailer YouTube
+      if (server === 'trailer-yt' && anime.ytTrailer) {
+        return {
+          type: 'embed',
+          url: `https://www.youtube.com/embed/${anime.ytTrailer}?autoplay=0&rel=0`,
+          label: 'Official Trailer PV (YouTube HD)'
+        };
+      }
+
+      // 3. Default aktif: Video MP4 HD bawaan sehingga langsung bisa ditonton di browser
+      const sampleIdx = (anime.id + ep) % DEFAULT_PLAYABLE_STREAMS.length;
+      return {
+        type: 'mp4',
+        url: DEFAULT_PLAYABLE_STREAMS[sampleIdx],
+        label: server === 'vip-1080p' ? 'Server VIP-1 (1080p Full HD)' : server === 'hd-720p' ? 'Server Utama (720p HD)' : 'Mirror Cepat (480p SD)'
+      };
+    }
+
+    function selectServer(srv) {
+      const user = getCurrentUser();
+      if (srv === 'vip-1080p' && !user?.isVip) {
+        openVipModal();
+        showToast('Server 1080p Full HD khusus Member VIP 👑');
+        return;
+      }
+      state.currentServer = srv;
+      renderApp();
+    }
+
+    function toggleCinemaMode() {
+      state.cinemaMode = !state.cinemaMode;
+      document.getElementById('cinemaOverlay').classList.toggle('hidden', !state.cinemaMode);
+      const wrap = document.getElementById('playerWrapper');
+      if (wrap) {
+        wrap.classList.toggle('relative', state.cinemaMode);
+        wrap.classList.toggle('z-50', state.cinemaMode);
+      }
+    }
+
+    // =========================================================
+    // 9. PAGE RENDERERS (HOME, WATCH, SCHEDULE, GENRES, DASHBOARD)
+    // =========================================================
+    function renderAnimeCard(anime, badgeText = null) {
+      return `
+        <div onclick="navigate('watch', ${anime.id}, 1)" class="group cursor-pointer bg-[#0e1320] border border-slate-800/80 hover:border-rose-500/60 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 shadow-lg">
+          <div class="relative">
+            ${renderPosterImg(anime, 'group-hover:scale-105 transition-transform duration-500')}
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0e1320] via-transparent to-black/30"></div>
+            <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md text-[10px] font-extrabold text-amber-400 border border-amber-400/30">
+              ★ ${anime.score}
+            </span>
+            <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md ${anime.status === 'On-Going' ? 'bg-rose-600' : 'bg-emerald-600'} text-[10px] font-bold text-white">
+              ${badgeText || (anime.status === 'On-Going' ? `Ep ${anime.totalEp}` : 'Tamat')}
+            </span>
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition bg-black/40">
+              <div class="w-11 h-11 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-xl">▶</div>
+            </div>
+          </div>
+          <div class="p-3">
+            <h3 class="font-bold text-xs sm:text-sm text-white line-clamp-1 group-hover:text-rose-400 transition">${anime.title}</h3>
+            <p class="text-[11px] text-slate-400 mt-1 flex items-center justify-between">
+              <span>${anime.type} • ${anime.genres[0]}</span>
+              <span class="text-slate-500">Sub Indo</span>
+            </p>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderHome() {
+      const hero = ANIME_CATALOG[0];
+      const ongoing = ANIME_CATALOG.filter(a => a.status === 'On-Going');
+      const complete = ANIME_CATALOG.filter(a => a.status === 'Complete');
+      const top10 = [...ANIME_CATALOG].sort((a, b) => parseFloat(b.score) - parseFloat(a.score)).slice(0, 8);
+
+      return `
+        <!-- HERO SPOTLIGHT -->
+        <section class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#13192b] via-[#0e1320] to-[#1a1020] border border-slate-800/90 p-6 sm:p-8 mb-8 shadow-2xl">
+          <div class="grid md:grid-cols-[1fr_210px] gap-6 items-center">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-600/20 border border-rose-500/40 text-rose-400 text-xs font-bold mb-3">
+                <span>🔥</span> <span>TRENDING #1 MINGGU INI</span>
+              </div>
+              <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">${hero.title}</h1>
+              <p class="text-xs text-slate-400 mt-1">${hero.alt} • Studio ${hero.studio} • ★ ${hero.score}</p>
+              <p class="text-xs sm:text-sm text-slate-300 mt-3 max-w-2xl leading-relaxed">${hero.synopsis}</p>
+              <div class="flex flex-wrap gap-2 mt-4">
+                ${hero.genres.map(g => `<span class="px-2.5 py-1 rounded-lg bg-slate-800/90 text-[11px] text-slate-300 font-semibold">${g}</span>`).join('')}
+              </div>
+              <div class="flex flex-wrap items-center gap-3 mt-6">
+                <button onclick="navigate('watch', ${hero.id}, 1)" class="px-6 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-rose-600/30 flex items-center gap-2 transition">
+                  <span>▶</span> <span>Tonton Episode 1</span>
+                </button>
+                <button onclick="openVipModal()" class="px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500/20 to-yellow-500/10 border border-amber-400/50 text-amber-300 hover:border-amber-300 font-bold text-xs sm:text-sm transition">
+                  👑 Akses 1080p VIP
+                </button>
+              </div>
+            </div>
+            <div class="hidden md:block rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl">
+              ${renderPosterImg(hero)}
+            </div>
+          </div>
+        </section>
+
+        <!-- 2-COLUMN OTAKUDESU / NONTONANIMEID LAYOUT -->
+        <div class="grid lg:grid-cols-[1fr_300px] gap-8">
+          <div class="space-y-10">
+            <!-- ON-GOING -->
+            <section>
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-extrabold text-white flex items-center gap-2">
+                  <span class="w-1.5 h-5 rounded-full bg-rose-600"></span>
+                  <span>Anime On-Going Terbaru</span>
+                </h2>
+                <button onclick="navigate('schedule')" class="text-xs text-rose-400 hover:text-rose-300 font-bold">Lihat Jadwal →</button>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                ${ongoing.map(a => renderAnimeCard(a)).join('')}
+              </div>
+            </section>
+
+            <!-- COMPLETE -->
+            <section>
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-extrabold text-white flex items-center gap-2">
+                  <span class="w-1.5 h-5 rounded-full bg-emerald-500"></span>
+                  <span>Anime Complete (Tamat)</span>
+                </h2>
+                <button onclick="navigate('genres')" class="text-xs text-emerald-400 hover:text-emerald-300 font-bold">Semua Genre →</button>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                ${complete.map(a => renderAnimeCard(a)).join('')}
+              </div>
+            </section>
+          </div>
+
+          <!-- SIDEBAR TOP 10 & GENRE -->
+          <aside class="space-y-6">
+            <div class="bg-[#0e1320] border border-slate-800/90 rounded-2xl p-4">
+              <h3 class="text-sm font-extrabold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+                <span>🏆</span> <span>Top Anime Populer</span>
+              </h3>
+              <div class="space-y-3">
+                ${top10.map((a, idx) => `
+                  <div onclick="navigate('watch', ${a.id}, 1)" class="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-800/70 cursor-pointer transition">
+                    <span class="w-6 h-6 rounded-lg ${idx < 3 ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'} font-extrabold text-xs flex items-center justify-center shrink-0">
+                      ${idx + 1}
+                    </span>
+                    <div class="w-10 rounded-lg overflow-hidden shrink-0">${renderPosterImg(a)}</div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-xs font-bold text-white truncate">${a.title}</p>
+                      <p class="text-[11px] text-slate-400">★ ${a.score} • ${a.totalEp} Eps</p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </aside>
+        </div>
+      `;
+    }
+
+    function renderWatch() {
+      const anime = state.currentAnime || ANIME_CATALOG[0];
+      const ep = state.currentEp || 1;
+      const user = getCurrentUser();
+      const media = resolveStreamMedia(anime, ep, state.currentServer);
+      const maxEpButtons = Math.min(anime.totalEp, 60);
+      const isWatchlisted = user?.watchlist?.includes(anime.id);
+
+      const allComments = JSON.parse(localStorage.getItem(KEYS.COMMENTS) || '{}');
+      const animeComments = allComments[anime.id] || [
+        { author: 'RizkyNime', isVip: true, text: 'Kualitas 1080p VIP bening banget tanpa buffering!', time: 'Baru saja' },
+        { author: 'AlyaChan', isVip: false, text: 'Subtitle Indonesianya rapi dan gampang dipahami.', time: '1 jam lalu' }
+      ];
+
+      return `
+        <div class="space-y-6">
+          <!-- Breadcrumb -->
+          <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+            <div>
+              <button onclick="navigate('home')" class="hover:text-white">Beranda</button> /
+              <span class="text-slate-300">${anime.title}</span> /
+              <span class="text-rose-400 font-bold">Episode ${ep}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="toggleCinemaMode()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold">
+                ${state.cinemaMode ? '💡 Nyalakan Lampu' : '🌑 Matikan Lampu'}
+              </button>
+              <button onclick="toggleWatchlist(${anime.id})" class="px-3 py-1.5 rounded-lg ${isWatchlisted ? 'bg-rose-600 text-white' : 'bg-slate-800 text-slate-200'} font-semibold">
+                ${isWatchlisted ? '❤️ Tersimpan' : '🤍 Watchlist'}
+              </button>
+            </div>
+          </div>
+
+          <!-- PLAYER WRAPPER -->
+          <div id="playerWrapper" class="bg-[#0b0f19] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+            <div class="aspect-video bg-black w-full relative">
+              ${media.type === 'embed'
+                ? (media.url.includes('<iframe')
+                    ? media.url
+                    : `<iframe src="${media.url}" class="w-full h-full border-0" allow="autoplay; fullscreen; encrypted-media" allowfullscreen></iframe>`)
+                : `<video id="animeVideoPlayer" controls playsinline preload="metadata" class="w-full h-full bg-black">
+                     <source src="${media.url}" type="video/mp4" />
+                     Browser Anda tidak mendukung pemutar video HTML5.
+                   </video>`
+              }
+            </div>
+
+            <!-- SERVER & EPISODE CONTROLS -->
+            <div class="p-4 bg-[#0e1320] border-t border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <p class="text-[11px] text-slate-400">Sedang Memutar: <span class="text-amber-400 font-bold">${media.label}</span></p>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  <button onclick="selectServer('vip-1080p')" class="px-3 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1.5 transition ${state.currentServer === 'vip-1080p' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-amber-300 border border-amber-500/40'}">
+                    <span>👑</span> <span>Server VIP-1 (1080p FHD)</span>
+                  </button>
+                  <button onclick="selectServer('hd-720p')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${state.currentServer === 'hd-720p' ? 'bg-rose-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">
+                    Server Utama (720p HD)
+                  </button>
+                  <button onclick="selectServer('sd-480p')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${state.currentServer === 'sd-480p' ? 'bg-rose-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">
+                    Mirror Cepat (480p)
+                  </button>
+                  <button onclick="selectServer('trailer-yt')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${state.currentServer === 'trailer-yt' ? 'bg-sky-600 text-white' : 'bg-slate-800 text-sky-300 hover:bg-slate-700'}">
+                    🎬 Trailer Resmi PV
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button ${ep <= 1 ? 'disabled' : ''} onclick="navigate('watch', ${anime.id}, ${ep - 1})" class="px-3.5 py-2 rounded-xl bg-slate-800 disabled:opacity-40 hover:bg-slate-700 text-xs font-bold">
+                  ← Prev Ep
+                </button>
+                <button ${ep >= anime.totalEp ? 'disabled' : ''} onclick="navigate('watch', ${anime.id}, ${ep + 1})" class="px-3.5 py-2 rounded-xl bg-rose-600 disabled:opacity-40 hover:bg-rose-500 text-xs font-bold">
+                  Next Ep →
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- EPISODE GRID -->
+          <div class="bg-[#0e1320] border border-slate-800 rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-extrabold text-white">Daftar Episode (${anime.totalEp} Episode)</h3>
+              <span class="text-xs text-slate-400">Klik nomor episode untuk memutar</span>
+            </div>
+            <div class="grid grid-cols-5 sm:grid-cols-10 md:grid-cols-12 gap-2 max-h-56 overflow-y-auto pr-1">
+              ${Array.from({ length: maxEpButtons }, (_, i) => i + 1).map(n => `
+                <button onclick="navigate('watch', ${anime.id}, ${n})" class="py-2 rounded-lg text-xs font-extrabold transition ${n === ep ? 'bg-rose-600 text-white shadow-lg shadow-rose-600/30' : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'}">
+                  ${n}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- DETAIL METADATA & DOWNLOAD BOX (OTAKUDESU STYLE) -->
+          <div class="grid lg:grid-cols-[220px_1fr] gap-6 bg-[#0e1320] border border-slate-800 rounded-2xl p-5">
+            <div class="rounded-xl overflow-hidden border border-slate-700/80 max-w-[220px]">
+              ${renderPosterImg(anime)}
+            </div>
+            <div class="space-y-4">
+              <div>
+                <h1 class="text-xl sm:text-2xl font-extrabold text-white">${anime.title} Subtitle Indonesia</h1>
+                <p class="text-xs text-slate-400 mt-0.5">${anime.alt}</p>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${anime.synopsis}</p>
+
+              <div class="grid sm:grid-cols-2 gap-2 text-xs bg-slate-900/80 border border-slate-800 rounded-xl p-3.5">
+                <div><span class="text-slate-400">Skor:</span> <strong class="text-amber-400">★ ${anime.score}</strong></div>
+                <div><span class="text-slate-400">Status:</span> <strong class="text-emerald-400">${anime.status}</strong></div>
+                <div><span class="text-slate-400">Total Episode:</span> <strong class="text-white">${anime.totalEp}</strong></div>
+                <div><span class="text-slate-400">Durasi:</span> <strong class="text-white">${anime.duration}</strong></div>
+                <div><span class="text-slate-400">Studio:</span> <strong class="text-white">${anime.studio}</strong></div>
+                <div><span class="text-slate-400">Rilis:</span> <strong class="text-white">${anime.aired}</strong></div>
+              </div>
+
+              <!-- Download Links -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5">
+                <h4 class="text-xs font-extrabold text-white mb-2">Download Episode ${ep} (Sub Indo)</h4>
+                <div class="flex flex-wrap gap-2 text-xs">
+                  <a href="${media.type === 'mp4' ? media.url : '#'}" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold">480p (MP4)</a>
+                  <a href="${media.type === 'mp4' ? media.url : '#'}" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold">720p HD (MP4)</a>
+                  <button onclick="${user?.isVip ? `window.open('${media.url}', '_blank')` : 'openVipModal()'}" class="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/50 text-amber-300 font-bold">
+                    👑 1080p Full HD VIP
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMMENTS -->
+          <div class="bg-[#0e1320] border border-slate-800 rounded-2xl p-5">
+            <h3 class="text-sm font-extrabold text-white mb-3">Komentar Penonton (${animeComments.length})</h3>
+            <form onsubmit="postComment(event, ${anime.id})" class="flex gap-2 mb-4">
+              <input id="commentInput" type="text" required placeholder="Tulis komentar tentang episode ini..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-rose-500" />
+              <button type="submit" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs">Kirim</button>
+            </form>
+            <div class="space-y-2.5">
+              ${animeComments.map(c => `
+                <div class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-3">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-bold ${c.isVip ? 'text-amber-400' : 'text-slate-200'}">${c.author} ${c.isVip ? '👑 VIP' : ''}</span>
+                    <span class="text-[10px] text-slate-500">${c.time}</span>
+                  </div>
+                  <p class="text-xs text-slate-300 mt-1">${c.text}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function postComment(e, animeId) {
+      e.preventDefault();
+      const input = document.getElementById('commentInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const user = getCurrentUser();
+      const all = JSON.parse(localStorage.getItem(KEYS.COMMENTS) || '{}');
+      const list = all[animeId] || [];
+      list.unshift({
+        author: user ? user.name : 'Tamu',
+        isVip: !!user?.isVip,
+        text,
+        time: 'Baru saja'
+      });
+      all[animeId] = list;
+      localStorage.setItem(KEYS.COMMENTS, JSON.stringify(all));
+      renderApp();
+    }
+
+    function renderSchedule() {
+      const days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+      const list = ANIME_CATALOG.filter(a => a.day === state.scheduleDay);
+      return `
+        <div class="space-y-6">
+          <div>
+            <h1 class="text-2xl font-extrabold text-white">Jadwal Rilis Anime Sub Indo</h1>
+            <p class="text-xs text-slate-400 mt-1">Estimasi jadwal tayang mingguan (WIB)</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            ${days.map(d => `
+              <button onclick="state.scheduleDay='${d}'; renderApp()" class="px-4 py-2 rounded-xl text-xs font-bold transition ${state.scheduleDay === d ? 'bg-rose-600 text-white' : 'bg-[#0e1320] text-slate-400 border border-slate-800 hover:text-white'}">
+                ${d}
+              </button>
+            `).join('')}
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
+            ${list.length ? list.map(a => renderAnimeCard(a, a.time)).join('') : '<p class="text-xs text-slate-400 col-span-full">Tidak ada jadwal khusus hari ini.</p>'}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGenres() {
+      const allGenres = ['All', 'Action', 'Adventure', 'Fantasy', 'Romance', 'Comedy', 'Drama', 'Supernatural', 'Sci-Fi', 'Sports', 'Mystery'];
+      const filtered = state.selectedGenre === 'All'
+        ? ANIME_CATALOG
+        : ANIME_CATALOG.filter(a => a.genres.includes(state.selectedGenre));
+      return `
+        <div class="space-y-6">
+          <h1 class="text-2xl font-extrabold text-white">Jelajahi Berdasarkan Genre</h1>
+          <div class="flex flex-wrap gap-2">
+            ${allGenres.map(g => `
+              <button onclick="state.selectedGenre='${g}'; renderApp()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${state.selectedGenre === g ? 'bg-rose-600 text-white' : 'bg-[#0e1320] text-slate-400 border border-slate-800 hover:text-white'}">
+                ${g}
+              </button>
+            `).join('')}
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
+            ${filtered.map(a => renderAnimeCard(a)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSearchResults() {
+      const q = state.searchQuery.toLowerCase();
+      const results = ANIME_CATALOG.filter(a =>
+        a.title.toLowerCase().includes(q) ||
+        a.alt.toLowerCase().includes(q) ||
+        (a.aliases && a.aliases.some(al => al.includes(q))) ||
+        a.genres.some(g => g.toLowerCase().includes(q))
+      );
+      return `
+        <div class="space-y-6">
+          <div class="flex items-center justify-between">
+            <h1 class="text-xl font-extrabold text-white">Hasil Pencarian: "${state.searchQuery}" (${results.length})</h1>
+            <button onclick="clearSearch()" class="text-xs text-rose-400 font-bold">Reset Pencarian</button>
+          </div>
+          ${results.length
+            ? `<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">${results.map(a => renderAnimeCard(a)).join('')}</div>`
+            : `<div class="bg-[#0e1320] border border-slate-800 rounded-2xl p-8 text-center text-sm text-slate-400">Judul tidak ditemukan. Coba kata kunci lain seperti <strong>Frieren</strong>, <strong>One Piece</strong>, atau <strong>Solo Leveling</strong>.</div>`
+          }
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      const user = getCurrentUser();
+      if (!user) { navigate('home'); return ''; }
+      const watchlistAnimes = ANIME_CATALOG.filter(a => (user.watchlist || []).includes(a.id));
+      const historyList = user.history || [];
+
+      return `
+        <div class="space-y-8">
+          <!-- PROFILE BANNER -->
+          <div class="rounded-3xl p-6 sm:p-8 border ${user.isVip ? 'luxury-gold-card' : 'bg-[#0e1320] border-slate-800'} flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-16 rounded-2xl ${user.isVip ? 'bg-gradient-to-br from-amber-300 to-amber-600 text-slate-950' : 'bg-rose-600 text-white'} font-black text-2xl flex items-center justify-center shadow-xl">
+                ${user.name[0].toUpperCase()}
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h1 class="text-xl sm:text-2xl font-extrabold text-white">${user.name}</h1>
+                  ${user.isVip
+                    ? '<span class="px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[11px] font-black">👑 VIP PREMIUM</span>'
+                    : '<span class="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[11px] font-bold">Member Biasa</span>'}
+                </div>
+                <p class="text-xs text-slate-400 mt-1">${user.email} • Bergabung ${user.joinedAt || '2026'}</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2.5">
+              ${!user.isVip ? `<button onclick="openVipModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-extrabold text-xs shadow-lg">Upgrade VIP 1080p 👑</button>` : ''}
+              <button onclick="logoutUser()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs">Keluar Akun</button>
+            </div>
+          </div>
+
+          <!-- LANJUT NONTON -->
+          <section>
+            <h2 class="text-lg font-extrabold text-white mb-4">Lanjut Nonton (${historyList.length})</h2>
+            ${historyList.length
+              ? `<div class="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  ${historyList.map(h => `
+                    <div onclick="navigate('watch', ${h.animeId}, ${h.ep})" class="bg-[#0e1320] border border-slate-800 hover:border-rose-500/60 p-3.5 rounded-2xl cursor-pointer flex items-center justify-between transition">
+                      <div>
+                        <p class="text-xs font-bold text-white">${h.title}</p>
+                        <p class="text-[11px] text-rose-400 font-semibold mt-0.5">Episode ${h.ep}</p>
+                      </div>
+                      <span class="px-3 py-1.5 rounded-lg bg-rose-600/20 text-rose-400 text-xs font-bold">▶ Lanjut</span>
+                    </div>
+                  `).join('')}
+                </div>`
+              : `<p class="text-xs text-slate-400">Belum ada riwayat tontonan.</p>`
+            }
+          </section>
+
+          <!-- WATCHLIST -->
+          <section>
+            <h2 class="text-lg font-extrabold text-white mb-4">Watchlist Saya (${watchlistAnimes.length})</h2>
+            ${watchlistAnimes.length
+              ? `<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">${watchlistAnimes.map(a => renderAnimeCard(a)).join('')}</div>`
+              : `<p class="text-xs text-slate-400">Watchlist masih kosong. Klik tombol Watchlist saat menonton anime favoritmu.</p>`
+            }
+          </section>
+        </div>
+      `;
+    }
+
+    function renderApp() {
+      const main = document.getElementById('appMain');
+      if (state.view === 'watch') main.innerHTML = renderWatch();
+      else if (state.view === 'schedule') main.innerHTML = renderSchedule();
+      else if (state.view === 'genres') main.innerHTML = renderGenres();
+      else if (state.view === 'search') main.innerHTML = renderSearchResults();
+      else if (state.view === 'dashboard') main.innerHTML = renderDashboard();
+      else main.innerHTML = renderHome();
+    }
+
+    // Sinkronisasi real-time jika Owner meng-ACC VIP atau mengubah harga/DANA dari tab owner-admin.html
+    window.addEventListener('storage', () => {
+      renderHeaderAuth();
+      renderApp();
+    });
+
+    // Init
+    renderHeaderAuth();
+    renderApp();
+    hydratePostersBatch();
+  </script>
+</body>
+</html>
